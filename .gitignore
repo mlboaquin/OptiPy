@@ -56,7 +56,6 @@ coverage.xml
 
 # Project specific
 models/
-dataset/
 *.pth
 *.json
 *.log
