@@ -1,0 +1,84 @@
+# Virtual Environment
+venv/
+pypy_venv/
+ENV/
+.env
+.venv/
+env/
+env.bak/
+venv.bak/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+.project
+.pydevproject
+.settings/
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing and coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Project specific
+models/
+dataset/
+*.pth
+*.json
+*.log
+*.csv
+*.db
+*.sqlite
+*.sqlite3
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.bak
+*.tmp
+*.temp
+
+# Security related
+*.key
+*.pem
+*.cert
+*.password
+config.ini
+secrets.yaml
+credentials.json
+.env* 
