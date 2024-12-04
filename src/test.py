@@ -1,10 +1,10 @@
-from imageToCode.tesseract_extract import CodeExtractor
+from imageToCode import CodeExtractor
 import os
 import json
 
 def test_single_image():
     # Test parameters
-    test_image = "src/dataset/test/images/image_1.png"
+    test_image = "src/dataset/test/images/image_3.png"
     
     print(f"Testing image: {test_image}")
     print("-" * 80)
@@ -12,18 +12,6 @@ def test_single_image():
     try:
         # Initialize Tesseract extractor
         extractor = CodeExtractor()
-        
-        # Load ground truth for comparison if available
-        gt_path = "src/dataset/test/code_snippets.json"
-        if os.path.exists(gt_path):
-            with open(gt_path, 'r', encoding='utf-8') as f:
-                ground_truth = json.load(f)
-                image_id = os.path.splitext(os.path.basename(test_image))[0]
-                if image_id in ground_truth:
-                    print("\nGround Truth Code:")
-                    print("-" * 40)
-                    print(ground_truth[image_id])
-                    print("-" * 40)
         
         # Extract code from test image
         extracted_code = extractor.extract_code_from_image(test_image)

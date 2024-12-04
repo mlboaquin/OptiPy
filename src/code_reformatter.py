@@ -1,5 +1,6 @@
 import ast
 from typing import Optional
+
 class EnergyEfficientReformatter(ast.NodeTransformer):
     def __init__(self):
         self.changes_made = []
@@ -137,8 +138,8 @@ def refactor_code(code: str) -> tuple[Optional[str], list[str]]:
         tree = ast.parse(code)
         
         # Apply our transformations
-        transformer = EnergyEfficientReformatter()
-        modified_tree = transformer.visit(tree)
+        reformatter = EnergyEfficientReformatter()
+        modified_tree = reformatter.visit(tree)
         ast.fix_missing_locations(modified_tree)
         
         # Convert back to source code
@@ -150,7 +151,7 @@ def refactor_code(code: str) -> tuple[Optional[str], list[str]]:
         except Exception as e:
             return None, [f"Refactored code validation failed: {str(e)}"]
         
-        return refactored, transformer.changes_made
+        return refactored, reformatter.changes_made
         
     except SyntaxError as e:
         return None, [f"Input code has syntax error: {str(e)}"]
