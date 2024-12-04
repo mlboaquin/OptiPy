@@ -16,3 +16,6 @@ tqdm>=4.65.0
 pytest>=7.0.0
 sniffio>=1.2.0
 exceptiongroup>=1.1.0
+
+# Environment Variables
+python-dotenv>=0.21.0

@@ -1,6 +1,20 @@
-import torch
-from code_extractor import CodeExtractor
 import os
+import sys
+from pathlib import Path
+
+# Add the project root directory to Python path
+current_file = Path(__file__).resolve()
+project_root = current_file.parent.parent.parent  # Go up three levels from this file
+src_path = project_root / "src"
+sys.path.append(str(src_path))
+
+# Debug prints
+print("Project Root:", project_root)
+print("Src Path:", src_path)
+print("sys.path:", sys.path)
+
+import torch
+from imageToCode.code_extractor import CodeExtractor
 import json
 import logging
 
@@ -17,7 +31,7 @@ def load_data(train_dir):
     # Get JSON files from the main train directory
     for filename in os.listdir(train_dir):
         if filename.endswith('.json'):
-            with open(os.path.join(train_dir, filename), 'r') as f:
+            with open(os.path.join(train_dir, filename), 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 # Iterate over each code snippet in the JSON data
                 for key, snippet in data.items():
@@ -42,6 +56,5 @@ def train_model(train_dir, epochs=10, batch_size=32, model_path="model.pth"):
     print(f"Model saved to {model_path}")
 
 if __name__ == "__main__":
-    train_dir = "C:/Users/user/Desktop/Career/BCS35/Sem_1/Machine Learning/WPH/PROJECT/src/dataset/train"  # Path to the training data directory
-
+    train_dir = "C:/Users/user/Desktop/Career/BCS35/Sem_1/Machine Learning/WPH/PROJECT/src/dataset/train"
     train_model(train_dir)
