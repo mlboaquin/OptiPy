@@ -1,5 +1,5 @@
 import numpy as np
-from emissions_tracker import compare_emissions, optimized_code
+from emissions_tracker import compare_emissions
 from code_reformatter import refactor_code
 
 # Original sample code

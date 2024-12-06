@@ -4,7 +4,22 @@ from typing import Optional
 class EnergyEfficientReformatter(ast.NodeTransformer):
     def __init__(self):
         self.changes_made = []
+        self.comments_removed = []
         
+    def visit_Module(self, node):
+        """Track comments that will be removed during AST transformation"""
+        # Get original source lines if available
+        if hasattr(node, 'source_lines'):
+            for line in node.source_lines:
+                line = line.strip()
+                if line.startswith('#'):
+                    self.comments_removed.append(line)
+                    self.changes_made.append(f"Removed comment: {line}")
+        
+        # Continue with normal visit
+        self.generic_visit(node)
+        return node
+
     def visit_For(self, node):
         """Convert list.append() in for loops to list comprehension"""
         self.generic_visit(node)  # Continue visiting child nodes
@@ -136,6 +151,9 @@ def refactor_code(code: str) -> tuple[Optional[str], list[str]]:
     try:
         # Parse the code into an AST
         tree = ast.parse(code)
+        
+        # Store original source lines in the AST for comment tracking
+        tree.source_lines = code.splitlines()
         
         # Apply our transformations
         reformatter = EnergyEfficientReformatter()

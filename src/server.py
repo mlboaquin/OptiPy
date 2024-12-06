@@ -9,6 +9,9 @@ import io
 from contextlib import redirect_stdout
 import threading
 import multiprocessing
+from PIL import Image
+import pytesseract
+import base64
 
 app = Flask(__name__)
 CORS(app)
@@ -132,6 +135,36 @@ def optimize_code():
 def health_check():
     """Simple health check endpoint."""
     return jsonify({'status': 'healthy'})
+
+@app.route('/image-to-code', methods=['POST'])
+def image_to_code():
+    """Endpoint to receive code as an image and return extracted code."""
+    try:
+        data = request.get_json()
+        if not data or 'image' not in data:
+            return jsonify({'error': 'No image provided'}), 400
+
+        # Decode base64 image
+        try:
+            image_data = base64.b64decode(data['image'])
+            image = Image.open(io.BytesIO(image_data))
+        except Exception as e:
+            return jsonify({'error': f'Invalid image format: {str(e)}'}), 400
+
+        # Extract text from image using OCR
+        try:
+            extracted_code = pytesseract.image_to_string(image)
+            if not extracted_code.strip():
+                return jsonify({'error': 'No text could be extracted from the image'}), 400
+        except Exception as e:
+            return jsonify({'error': f'OCR failed: {str(e)}'}), 500
+
+        return jsonify({
+            'code': extracted_code
+        })
+
+    except Exception as e:
+        return jsonify({'error': f'Unexpected error: {str(e)}'}), 500
 
 if __name__ == '__main__':
     # Run Flask with threading disabled to avoid conflicts with multiprocessing
