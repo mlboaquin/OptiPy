@@ -1,0 +1,101 @@
+[
+  "# Basic f-string with number\nage = 25\nmessage = f'User is {age} years old'",
+
+  "# F-string with multiple numbers\nx = 10\ny = 20\ncoords = f'Point at ({x}, {y})'",
+
+  "# F-string with string variable\nname = 'Alice'\ngreeting = f'Hello, {name}!'",
+
+  "# F-string with calculation\ncount = 5\nresult = f'Total: {count * 2}'",
+
+  "# F-string with multiple types\nitem = 'book'\nquantity = 3\nprice = 9.99\norder = f'{quantity}x {item} at ${price}'",
+
+  "# F-string with boolean\nis_active = True\nstatus = f'Account status: {is_active}'",
+
+  "# F-string with integer division\ntotal = 100\nparts = 3\ndivision = f'Average: {total / parts}'",
+
+  "# F-string with string methods\nusername = 'john_doe'\ndisplay = f'Welcome back, {username.title()}'",
+
+  "# F-string with multiple lines\nfirst = 'John'\nlast = 'Doe'\nage = 30\nprofile = f'Name: {first} {last}\nAge: {age}'",
+
+  "# F-string with type conversion\ncount = 42\nmessage = f'Count is: {count} (type: {type(count).__name__})'",
+
+  "# F-string with numeric comparison\nscore = 85\nresult = f'Test result: {score > 80 and \"Pass\" or \"Fail\"}'",
+
+  "# F-string with string length\ntext = 'Python'\ninfo = f'Length of \"{text}\" is {len(text)} characters'",
+
+  "# F-string with absolute value\nnumber = -42\noutput = f'Absolute value of {number} is {abs(number)}'",
+
+  "# F-string with character repetition\nchar = '*'\ncount = 3\npattern = f'Repeated pattern: {char * count}'",
+
+  "# F-string with string indexing\nword = 'Python'\nfirst_last = f'First: {word[0]}, Last: {word[-1]}'",
+
+  "# F-string with number formatting\nvalue = 123.456\ndisplay = f'Formatted number: {round(value, 1)}'",
+
+  "# F-string with conditional value\nage = 20\nstatus = f'Status: {\"Adult\" if age >= 18 else \"Minor\"}'",
+
+  "# F-string with list length\nitems = [1, 2, 3, 4]\nsummary = f'List contains {len(items)} items'",
+
+  "# F-string with string upper/lower\nname = 'Alice'\nformatted = f'Upper: {name.upper()}, Lower: {name.lower()}'",
+
+  "# F-string with remainder calculation\nn = 15\ninfo = f'Number {n} divided by 4 has remainder {n % 4}'",
+
+  "# F-string with string slicing\ntext = 'Python Programming'\nsliced = f'First word: {text[:6]}'",
+
+  "# F-string with max/min values\nnumbers = [1, 5, 3, 8, 2]\nstats = f'Max: {max(numbers)}, Min: {min(numbers)}'",
+
+  "# F-string with string counting\ntext = 'hello world'\ncount = f'Number of l\\'s: {text.count(\"l\")}'",
+
+  "# F-string with boolean checks\nword = 'Python123'\ninfo = f'Is alphanumeric: {word.isalnum()}'",
+
+  "# F-string with tuple indexing\npoint = (10, 20, 30)\ncoords = f'Z coordinate: {point[2]}'",
+
+  "# F-string with string finding\ntext = 'Python is great'\nposition = f'Position of \"is\": {text.find(\"is\")}'",
+
+  "# F-string with power calculation\nbase = 2\nexp = 3\nresult = f'{base} to the power of {exp} is {base ** exp}'",
+
+  "# F-string with dictionary key\nuser = {'name': 'John', 'age': 30}\ninfo = f'User name: {user[\"name\"]}'",
+
+  "# F-string with string replacement\ntext = 'hello world'\nmodified = f'Modified text: {text.replace(\"o\", \"0\")}'",
+
+  "# F-string with binary conversion\nnumber = 42\nbinary = f'Binary of {number}: {bin(number)[2:]}'",
+
+  "# F-string with string zfill\nnumber = 42\nformatted = f'ID: {str(number).zfill(5)}'",
+
+  "# F-string with list sum\nnumbers = [1, 2, 3, 4, 5]\ntotal = f'Sum of list: {sum(numbers)}'",
+
+  "# F-string with string split\ntext = 'hello-world'\nparts = f'First part: {text.split(\"-\")[0]}'",
+
+  "# F-string with character order\nchar = 'A'\nascii_val = f'ASCII value of {char} is {ord(char)}'",
+
+  "# F-string with string strip\ntext = '   python   '\ncleaned = f'Cleaned: [{text.strip()}]'",
+
+  "# F-string with bool conversion\nvalue = 0\nstatus = f'Has value: {bool(value)}'",
+
+  "# F-string with string multiplication\nsymbol = '#'\nline = f'Separator: {symbol * 10}'",
+
+  "# F-string with number sign test\nnum = -42\nsign = f'Number is: {\"positive\" if num > 0 else \"negative\" if num < 0 else \"zero\"}'",
+
+  "# F-string with string endswith\nfilename = 'document.pdf'\nvalid = f'Is PDF: {filename.endswith(\".pdf\")}'",
+
+  "# F-string with character case test\nletter = 'A'\ncase = f'Character {letter} is: {\"uppercase\" if letter.isupper() else \"lowercase\"}'",
+
+  "# F-string with hex formatting\nnumber = 255\nhex_str = f'Hex value: {hex(number)[2:].upper()}'",
+
+  "# F-string with list comprehension\nnums = [1, 2, 3]\nresult = f'Squared: {[x*x for x in nums]}'",
+
+  "# F-string with string partition\ntext = 'key=value'\nparts = f'Before equals: {text.partition(\"=\")[0]}'",
+
+  "# F-string with set length\nunique_nums = {1, 2, 2, 3, 3, 3}\ninfo = f'Unique count: {len(unique_nums)}'",
+
+  "# F-string with string justification\nword = 'python'\naligned = f'Right aligned: {word.rjust(10)}'",
+
+  "# F-string with sequence check\ntext = 'abc123'\nresult = f'Contains digits: {any(c.isdigit() for c in text)}'",
+
+  "# F-string with string translation\ntext = 'hello'\nrot13 = f'ROT13: {text.translate(str.maketrans(\"abcdefghijklmnopqrstuvwxyz\", \"nopqrstuvwxyzabcdefghijklm\"))}'",
+
+  "# F-string with identity check\nx = None\nstatus = f'Is None: {x is None}'",
+
+  "# F-string with string concatenation\nprefix = 'py'\nsuffix = 'thon'\ncombined = f'Combined: {prefix + suffix}'",
+
+  "# F-string with membership test\nchar = 'x'\nvalid = f'Is vowel: {char in \"aeiou\"}'"
+]

@@ -1,0 +1,101 @@
+[
+  "# Basic mean calculation\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([1, 2, 3, 4, 5])\nresult = df.mean()",
+
+  "# Column mean\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})\nmeans = df.mean()",
+
+  "# Standard deviation\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([1, 2, 3, 4, 5])\nstd_val = df.std()",
+
+  "# Multi-column std\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'X': [1, 2, 3], 'Y': [4, 5, 6]})\nstd_vals = df.std()",
+
+  "# Simple sorting\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([3, 1, 4, 1, 5])\nsorted_df = df.sort_values()",
+
+  "# Series mean calculation\nimport pandas as pd\nimport numpy as np\nseries = pd.Series([1, 2, 3, 4, 5])\navg = series.mean()",
+
+  "# Series standard deviation\nimport pandas as pd\nimport numpy as np\nseries = pd.Series([1, 2, 3, 4, 5])\nspread = series.std()",
+
+  "# DataFrame column sort\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'vals': [3, 1, 4, 1, 5]})\nsorted_vals = df.sort_values('vals')",
+
+  "# Multi-index mean\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]}, index=['x', 'y', 'z'])\ncol_means = df.mean()",
+
+  "# Grouped standard deviation\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'group': ['A', 'A', 'B', 'B'], 'vals': [1, 2, 3, 4]})\nstd_by_group = df.groupby('group')['vals'].std()",
+
+  "# Mean with missing values\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([1, None, 3, 4, 5])\nresult = df.mean()",
+
+  "# Mixed type mean\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'nums': [1, 2, 3], 'vals': [1.5, 2.5, 3.5]})\navg = df.mean()",
+
+  "# Standard deviation with zeros\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([0, 0, 1, 2, 3])\nspread = df.std()",
+
+  "# Sort with duplicates\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([3, 1, 3, 1, 3])\nordered = df.sort_values()",
+
+  "# Column subset mean\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6], 'C': [7, 8, 9]})\nsubset_mean = df[['A', 'B']].mean()",
+
+  "# Multi-column sort\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'X': [1, 1, 2], 'Y': [3, 2, 1]})\nsorted_df = df.sort_values(['X', 'Y'])",
+
+  "# Standard deviation by column\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'vals1': [1, 2, 3], 'vals2': [4, 5, 6]})\ncol_std = df['vals1'].std()",
+
+  "# Mean with boolean mask\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([1, 2, 3, 4, 5])\nmask_mean = df[df > 2].mean()",
+
+  "# Sort index alignment\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'val': [3, 1, 4]}, index=['c', 'a', 'b'])\naligned = df.sort_values('val')",
+
+  "# Standard deviation with scale\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([10, 20, 30, 40, 50])\nscaled_std = df.std() / 10",
+
+  "# Mean with integer index\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([1, 2, 3, 4], index=[10, 20, 30, 40])\nindexed_mean = df.mean()",
+
+  "# Standard deviation with float values\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([1.5, 2.5, 3.5, 4.5])\nfloat_std = df.std()",
+
+  "# Sort descending values\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([3, 1, 4, 1, 5])\ndesc_sort = df.sort_values(ascending=False)",
+
+  "# Mean with datetime values\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'days': [1, 2, 3], 'vals': [10, 20, 30]})\nval_mean = df['vals'].mean()",
+
+  "# Multi-level standard deviation\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6], 'C': [7, 8, 9]})\nall_std = df.std()",
+
+  "# Sort with NaN values\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([3, None, 1, 4, None])\nnan_sort = df.sort_values()",
+
+  "# Column mean with labels\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'X': [1, 2, 3], 'Y': [4, 5, 6]}, columns=['X', 'Y'])\nlabel_mean = df.mean()",
+
+  "# Standard deviation with weights\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([10, 20, 30, 40])\nweighted_std = df.std() * 2",
+
+  "# Sort specific columns\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'A': [3, 1, 2], 'B': [6, 4, 5]})\nsorted_a = df.sort_values('A')",
+
+  "# Mean with time series\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([1, 2, 3, 4], index=['2023-01-01', '2023-01-02', '2023-01-03', '2023-01-04'])\nts_mean = df.mean()",
+
+  "# Mean with sparse data\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'A': [1, 0, 0], 'B': [0, 2, 0], 'C': [0, 0, 3]})\nsparse_mean = df.mean()",
+
+  "# Standard deviation with negative values\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([-3, -2, -1, 0, 1, 2, 3])\nneg_std = df.std()",
+
+  "# Sort with custom index\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'val': [3, 1, 4]}, index=['x', 'y', 'z'])\ncustom_sort = df.sort_values('val')",
+
+  "# Row-wise mean\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})\nrow_means = df.mean(axis=1)",
+
+  "# Column-wise standard deviation\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'X': [1, 2, 3], 'Y': [4, 5, 6]})\ncol_stds = df.std(axis=0)",
+
+  "# Sort multiple columns descending\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'A': [1, 1, 2], 'B': [4, 3, 2]})\nsorted_desc = df.sort_values(['A', 'B'], ascending=[False, False])",
+
+  "# Mean with boolean values\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'flags': [True, False, True, True]})\nbool_mean = df.mean()",
+
+  "# Standard deviation with repeating values\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([1, 1, 2, 2, 3, 3])\nrepeat_std = df.std()",
+
+  "# Sort with mixed types\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'vals': ['10', '2', '1']})\nmixed_sort = df.sort_values('vals')",
+
+  "# Mean with filtered data\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'A': [1, 2, 3, 4, 5]})\nfiltered_mean = df[df['A'] > 2].mean()",
+
+  "# Mean with categorical data\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'cat': pd.Categorical([1, 2, 3, 1, 2])})\ncat_mean = df['cat'].mean()",
+
+  "# Standard deviation with inf values\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([1, 2, np.inf, 4, 5])\ninf_std = df.std()",
+
+  "# Sort with empty values\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'vals': [3, '', 1, '', 2]})\nempty_sort = df.sort_values('vals')",
+
+  "# Mean with complex numbers\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([1+1j, 2+2j, 3+3j])\ncomplex_mean = df.mean()",
+
+  "# Standard deviation with large numbers\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([1e6, 2e6, 3e6, 4e6])\nlarge_std = df.std()",
+
+  "# Sort with special characters\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'text': ['@abc', '#def', '$ghi']})\nchar_sort = df.sort_values('text')",
+
+  "# Mean with exponential values\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([1e-3, 1e-2, 1e-1])\nexp_mean = df.mean()",
+
+  "# Standard deviation with small range\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame([0.001, 0.002, 0.003])\nsmall_std = df.std()",
+
+  "# Sort with case sensitivity\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'text': ['A', 'a', 'B', 'b']})\ncase_sort = df.sort_values('text')",
+
+  "# Mean with string lengths\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'words': ['a', 'bb', 'ccc']})\nlen_mean = df['words'].str.len().mean()"
+]

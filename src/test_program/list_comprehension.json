@@ -1,0 +1,101 @@
+[
+  "# Basic number list\nresult = []\nfor i in range(5):\n    result.append(i)",
+
+  "# Square numbers\nsquares = []\nfor num in range(1, 6):\n    squares.append(num * num)",
+
+  "# String upper case\nwords = ['hello', 'world', 'python']\nupper_words = []\nfor word in words:\n    upper_words.append(word.upper())",
+
+  "# Length calculation\nstrings = ['a', 'abc', 'hello']\nlengths = []\nfor s in strings:\n    lengths.append(len(s))",
+
+  "# Type names\nvalues = [42, 'hello', True, 3.14]\ntypes = []\nfor val in values:\n    types.append(type(val).__name__)",
+
+  "# String slicing\nwords = ['python', 'java', 'javascript']\nfirst_chars = []\nfor word in words:\n    first_chars.append(word[:2])",
+
+  "# Number conversion\nstr_nums = ['1', '2', '3', '4', '5']\nnumbers = []\nfor n in str_nums:\n    numbers.append(int(n))",
+
+  "# Character extraction\ntext = 'hello'\nchars = []\nfor c in text:\n    chars.append(c)",
+
+  "# Boolean conversion\nvalues = [0, 1, '', 'hello', [], [1,2]]\nbools = []\nfor val in values:\n    bools.append(bool(val))",
+
+  "# String formatting\nnums = [1, 2, 3, 4, 5]\nlabels = []\nfor n in nums:\n    labels.append(f'Item {n}')",
+
+  "# Absolute values\nnumbers = [-3, -2, -1, 0, 1, 2, 3]\npositives = []\nfor num in numbers:\n    positives.append(abs(num))",
+
+  "# String stripping\ntexts = ['  a  ', ' b ', '   c']\ncleaned = []\nfor text in texts:\n    cleaned.append(text.strip())",
+
+  "# Character counting\nwords = ['hello', 'world', 'python']\no_counts = []\nfor word in words:\n    o_counts.append(word.count('o'))",
+
+  "# String joining\nparts = [['a', 'b'], ['c', 'd'], ['e', 'f']]\njoined = []\nfor part in parts:\n    joined.append('-'.join(part))",
+
+  "# Binary conversion\nnumbers = [1, 2, 3, 4]\nbinaries = []\nfor num in numbers:\n    binaries.append(bin(num)[2:])",
+
+  "# String reversal\nwords = ['python', 'java', 'rust']\nreversed_words = []\nfor word in words:\n    reversed_words.append(word[::-1])",
+
+  "# Character case check\nchars = ['A', 'b', 'C', 'd']\nis_upper = []\nfor char in chars:\n    is_upper.append(char.isupper())",
+
+  "# String repetition\ncounts = [1, 2, 3]\nstars = []\nfor count in counts:\n    stars.append('*' * count)",
+
+  "# Round numbers\nvalues = [3.14159, 2.71828, 1.41421]\nrounded = []\nfor val in values:\n    rounded.append(round(val, 2))",
+
+  "# ASCII values\nchars = ['a', 'b', 'c']\nascii_vals = []\nfor char in chars:\n    ascii_vals.append(ord(char))",
+
+  "# String title case\nnames = ['john doe', 'jane smith', 'bob wilson']\ntitled = []\nfor name in names:\n    titled.append(name.title())",
+
+  "# Number sign\nnumbers = [-5, 0, 12, -3, 8]\nsigns = []\nfor num in numbers:\n    signs.append(1 if num > 0 else -1 if num < 0 else 0)",
+
+  "# String contains check\nwords = ['hello', 'world', 'python', 'code']\nhas_o = []\nfor word in words:\n    has_o.append('o' in word)",
+
+  "# Character to number\ndigits = ['1', '2', '3', '4']\nnums = []\nfor d in digits:\n    nums.append(int(d) * 2)",
+
+  "# String center align\nwords = ['a', 'bb', 'ccc']\ncentered = []\nfor word in words:\n    centered.append(word.center(5, '-'))",
+
+  "# List item access\nlists = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]\nfirsts = []\nfor lst in lists:\n    firsts.append(lst[0])",
+
+  "# String replace\nwords = ['hello', 'world', 'hello']\nreplaced = []\nfor word in words:\n    replaced.append(word.replace('l', '1'))",
+
+  "# Maximum value\npairs = [[1, 5], [2, 8], [3, 2]]\nmaxes = []\nfor pair in pairs:\n    maxes.append(max(pair))",
+
+  "# String endswith\nfiles = ['doc.txt', 'img.jpg', 'data.txt']\nis_txt = []\nfor file in files:\n    is_txt.append(file.endswith('.txt'))",
+
+  "# Digit check\nchars = ['1', 'a', '2', 'b', '3']\nis_digit = []\nfor char in chars:\n    is_digit.append(char.isdigit())",
+
+  "# String zfill padding\nnumbers = [1, 2, 3, 4, 5]\npadded = []\nfor num in numbers:\n    padded.append(str(num).zfill(3))",
+
+  "# List element sum\nlists = [[1, 2], [3, 4], [5, 6]]\nsums = []\nfor lst in lists:\n    sums.append(sum(lst))",
+
+  "# String split first\nphrases = ['hello world', 'python code', 'list comp']\nfirst_words = []\nfor phrase in phrases:\n    first_words.append(phrase.split()[0])",
+
+  "# Character ordinal range\nchars = ['A', 'B', 'C']\nin_range = []\nfor char in chars:\n    in_range.append(65 <= ord(char) <= 90)",
+
+  "# String rstrip specific\nwords = ['hello###', 'world##', 'python#']\ncleaned = []\nfor word in words:\n    cleaned.append(word.rstrip('#'))",
+
+  "# Number to hex\nnumbers = [10, 20, 30, 40]\nhex_nums = []\nfor num in numbers:\n    hex_nums.append(hex(num)[2:])",
+
+  "# String startswith\nwords = ['python', 'pypy', 'perl', 'php']\nstarts_py = []\nfor word in words:\n    starts_py.append(word.startswith('py'))",
+
+  "# List length check\nlists = [[1], [1, 2], [1, 2, 3]]\nis_long = []\nfor lst in lists:\n    is_long.append(len(lst) > 1)",
+
+  "# String capitalize\nwords = ['hello', 'world', 'python']\ncapitalized = []\nfor word in words:\n    capitalized.append(word.capitalize())",
+
+  "# Number range check\nnumbers = [5, 10, 15, 20, 25]\nin_bounds = []\nfor num in numbers:\n    in_bounds.append(10 <= num <= 20)",
+
+  "# String format width\nnumbers = [1, 22, 333]\nformatted = []\nfor num in numbers:\n    formatted.append(f'{num:>5}')",
+
+  "# List element product\npairs = [[2, 3], [4, 2], [3, 5]]\nproducts = []\nfor pair in pairs:\n    products.append(pair[0] * pair[1])",
+
+  "# String remove prefix\npaths = ['path/to/file', 'path/to/dir', 'path/from/root']\nshortened = []\nfor path in paths:\n    shortened.append(path.removeprefix('path/'))",
+
+  "# Number divisibility\nnumbers = [10, 15, 20, 25, 30]\ndiv_by_5 = []\nfor num in numbers:\n    div_by_5.append(num % 5 == 0)",
+
+  "# String last char\nwords = ['python', 'java', 'rust']\nlast_chars = []\nfor word in words:\n    last_chars.append(word[-1])",
+
+  "# List min element\ngroups = [[3, 1, 4], [1, 5, 9], [2, 6, 5]]\nminimums = []\nfor group in groups:\n    minimums.append(min(group))",
+
+  "# String is decimal\nvalues = ['123', '12.34', 'abc', '42']\nis_decimal = []\nfor val in values:\n    is_decimal.append(val.replace('.', '').isdigit())",
+
+  "# Tuple first element\ntuples = [(1, 'a'), (2, 'b'), (3, 'c')]\nfirsts = []\nfor t in tuples:\n    firsts.append(t[0])",
+
+  "# String vowel count\nwords = ['hello', 'world', 'python']\nvowel_counts = []\nfor word in words:\n    vowel_counts.append(sum(1 for c in word if c in 'aeiou'))",
+
+  "# Number to power\nbase_nums = [2, 3, 4]\npowers = []\nfor num in base_nums:\n    powers.append(num ** 3)"
+]
