@@ -78,6 +78,7 @@ def optimize_code():
     """Endpoint to receive code and return optimized version with emissions comparison."""
     try:
         data = request.get_json()
+        print(data)
         if not data or 'code' not in data:
             return jsonify({'error': 'No code provided'}), 400
 
@@ -140,14 +141,17 @@ def health_check():
 def image_to_code():
     """Endpoint to receive code as an image and return extracted code."""
     try:
-        data = request.get_json()
-        if not data or 'image' not in data:
-            return jsonify({'error': 'No image provided'}), 400
+        print(request.content_type)  # Log the content type
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file provided'}), 400
+
+        file = request.files['file']
+        if not file:
+            return jsonify({'error': 'No file provided'}), 400
 
         # Decode base64 image
         try:
-            image_data = base64.b64decode(data['image'])
-            image = Image.open(io.BytesIO(image_data))
+            image = Image.open(file.stream)  # Use the file stream directly
         except Exception as e:
             return jsonify({'error': f'Invalid image format: {str(e)}'}), 400
 

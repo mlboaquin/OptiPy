@@ -22,7 +22,7 @@ def test_code_extraction():
     extractor = CodeExtractor()
     
     # Paths
-    test_images_dir = "src/dataset/test/images"
+    test_images_dir = "src/dataset/train/images"
     code_snippets_path = "src/dataset/test/code_snippets.json"
     
     # Debug info
@@ -66,7 +66,7 @@ def test_code_extraction():
             continue
             
         # Get ground truth code
-        ground_truth = code_snippets[image_number]
+        ground_truth = code_snippets[str(int(image_number)+1)]
         
         # Calculate similarity
         similarity = calculate_similarity(extracted_code, ground_truth)
@@ -106,3 +106,4 @@ def test_code_extraction():
 
 if __name__ == "__main__":
     test_code_extraction()
+

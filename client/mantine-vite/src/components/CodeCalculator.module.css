@@ -1,0 +1,83 @@
+body {
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.textareaGroup {
+  display: flex;
+  gap: 1rem;
+}
+
+.textarea {
+  flex: 1;
+  resize: both;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.uploadButton {
+  margin-top: 1rem;
+  align-self: center;
+}
+
+.fileInput {
+  margin-top: 1rem;
+}
+
+.status {
+  margin-top: 1rem;
+  text-align: center;
+  color: green;
+}
+
+.originalCode {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.optimizedCode {
+  background-color: #e0ffe0;
+  color: #006400;
+}
+
+.changes {
+  background-color: #fff0e0;
+  color: #d2691e;
+}
+
+.metrics {
+  background-color: #e0f7ff;
+  color: #1e90ff;
+}
+
+.resultColumns {
+  display: flex;
+  justify-content: space-between;
+}
+
+.resultSection {
+  flex: 1;
+  margin: 0 10px;
+}
