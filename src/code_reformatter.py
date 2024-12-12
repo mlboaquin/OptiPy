@@ -72,7 +72,14 @@ class EnergyEfficientReformatter(ast.NodeTransformer):
                         )
                     )
                 else:
-                    parts.append(value.value)
+                    # Wrap all formatted values with str() for concatenation
+                    parts.append(
+                        ast.Call(
+                            func=ast.Name(id='str', ctx=ast.Load()),
+                            args=[value.value],
+                            keywords=[]
+                        )
+                    )
         
         # Build binary operations for string concatenation
         result = parts[0]
