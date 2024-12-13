@@ -25,7 +25,7 @@ const Home: React.FC<{ onNavigate: () => void }> = ({ onNavigate }) => {
     >
       <img src={logo} alt="Logo" height="200" width="200" />
       <Title style={{ textAlign: 'center', fontSize: '1.5rem', fontWeight: 'bold' }}>
-        Welcome to the Optipy
+        Welcome to the OptiPy
       </Title>
       <Button onClick={onNavigate}>
         Go to Code Calculator
