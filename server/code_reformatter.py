@@ -54,7 +54,7 @@ class EnergyEfficientReformatter(ast.NodeTransformer):
         return node
 
     def visit_JoinedStr(self, node):
-        """Convert f-strings to concatenation with proper type conversion"""
+        """Convert f-strings to concatenation witzzh proper type conversion"""
         parts = []
         for value in node.values:
             if isinstance(value, ast.Constant):
