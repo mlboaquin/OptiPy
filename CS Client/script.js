@@ -191,33 +191,58 @@ function updateChanges(changes) {
     }
     }
 
+function toScientificWithSuperscript(num, digits = 6) {
+    if (num === 0) return '0';
+    const exp = Math.floor(Math.log10(Math.abs(num)));
+    const mantissa = (num / Math.pow(10, exp)).toFixed(digits);
+    const superscriptDigits = {
+        '-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+        '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'
+    };
+    const expStr = String(exp).split('').map(c => superscriptDigits[c] || c).join('');
+    return `${mantissa} × 10${expStr}`;
+}
+
+function getResultHTML(value, unit) {
+    if (value > 0) {
+        return `<span style="color:#27ae60;"><span style='font-size:1.1em;'>▲</span> ${toScientificWithSuperscript(value)} ${unit}</span>`;
+    } else if (value < 0) {
+        return `<span style="color:#e74c3c; font-size:1.1em;">▼ ${toScientificWithSuperscript(Math.abs(value))} ${unit}</span>`;
+    } else {
+        return `<span>${toScientificWithSuperscript(value)} ${unit}</span>`;
+    }
+}
 
 function updateMetrics(metrics) {
-    // Get the features boxes by ID
     const originalBox = document.getElementById('original-metrics');
     const optimizedBox = document.getElementById('optimized-metrics');
     const resultsBox = document.getElementById('results-metrics');
 
-    if (metrics && metrics.original && metrics.optimized && metrics.improvements) {
+    if (metrics && metrics.original && metrics.optimized) {
+        // Compute reductions
+        const emissionsReduction = metrics.original.emissions - metrics.optimized.emissions;
+        const energyReduction = metrics.original.energy - metrics.optimized.energy;
+        const timeReduction = metrics.original.execution_time - metrics.optimized.execution_time;
+
         // Update Original Code metrics
         originalBox.innerHTML = `
-            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EMISSION:</b><br> ${metrics.original.emissions.toExponential()} CO2eq </li>
-            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>ENERGY:</b><br> ${metrics.original.energy.toExponential()} kWh</li>
-            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EXECUTION TIME:</b><br> ${metrics.original.execution_time.toExponential()} s</li>
+            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EMISSION:</b><br> ${toScientificWithSuperscript(metrics.original.emissions)} kg CO2eq </li>
+            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>ENERGY:</b><br> ${toScientificWithSuperscript(metrics.original.energy)} kWh</li>
+            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EXECUTION TIME:</b><br> ${metrics.original.execution_time} s</li>
         `;
 
         // Update Optimized Code metrics
         optimizedBox.innerHTML = `
-            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EMISSION:</b><br> ${metrics.optimized.emissions.toExponential()} CO2eq</li>
-            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>ENERGY:</b><br> ${metrics.optimized.energy.toExponential()} kWh</li>
-            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EXECUTION TIME:</b><br> ${metrics.optimized.execution_time.toExponential()} s</li>
+            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EMISSION:</b><br> ${toScientificWithSuperscript(metrics.optimized.emissions)} kg CO2eq</li>
+            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>ENERGY:</b><br> ${toScientificWithSuperscript(metrics.optimized.energy)} kWh</li>
+            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EXECUTION TIME:</b><br> ${metrics.optimized.execution_time} s</li>
         `;
 
-        // Update Results metrics
+        // Update Results metrics with color-coded arrows
         resultsBox.innerHTML = `
-            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EMISSION REDUCTION:</b><br> ${metrics.improvements.emissions_reduction.toExponential()} CO2eq</li>
-            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>ENERGY REDUCTION:</b><br> ${metrics.improvements.energy_reduction.toExponential()} kWh</li>
-            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>TIME REDUCTION:</b><br> ${metrics.improvements.time_reduction.toExponential()} s</li>
+            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EMISSION REDUCTION:</b><br> ${getResultHTML(emissionsReduction, 'kg CO2eq')}</li>
+            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>ENERGY REDUCTION:</b><br> ${getResultHTML(energyReduction, 'kWh')}</li>
+            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>TIME REDUCTION:</b><br> ${getResultHTML(timeReduction, 's')}</li>
         `;
     }
 }
