@@ -130,7 +130,12 @@ async function optimize() {
             if (data.optimized_code) {
                 outputText.value = data.optimized_code;
             } else if (data.error) {
-                outputText.value = `Error: ${data.error}`;
+                // Show error and details if available
+                let errorMsg = `Error: ${data.error}`;
+                if (data.details) {
+                    errorMsg += "\n\nDetails:\n" + data.details.join('\n');
+                }
+                outputText.value = errorMsg;
             } else {
                 outputText.value = 'No optimized code returned.';
             }
@@ -139,7 +144,11 @@ async function optimize() {
             if (data.metrics) updateMetrics(data.metrics);
         } else {
             outputText.classList.remove('shimmer');
-            outputText.value = `Error: ${data.error || 'Unknown error'}`;
+            let errorMsg = `Error: ${data.error || 'Unknown error'}`;
+            if (data.details) {
+                errorMsg += "\n\nDetails:\n" + data.details.join('\n');
+            }
+            outputText.value = errorMsg;
         }
     } catch (error) {
         console.error('Error:', error);
