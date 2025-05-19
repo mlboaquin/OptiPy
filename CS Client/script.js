@@ -97,16 +97,15 @@ async function optimize() {
     const outputText = document.getElementById('output-text');
     const optimizeButton = document.getElementById('optimize-btn');
 
+    // No confirmation dialog here
+
     // Show loading message with shimmer
     outputText.classList.add('shimmer');
     if (optimizeButton) {
-        alert('Please check your code for accuracy before optimizing.');
         optimizeButton.disabled = true;
         optimizeButton.classList.add('shimmer');
-      }
-      
-      outputText.value = 'Please wait while your code is being generated...';
-
+    }
+    outputText.value = 'Please wait while your code is being generated...';
 
     try {
         const response = await fetch('http://127.0.0.1:5000/optimize', {
@@ -148,7 +147,6 @@ async function optimize() {
         outputText.value = 'Error connecting to the server. Please try again.';
     } finally {
         if (optimizeButton) {
-           
             optimizeButton.disabled = false;
             optimizeButton.classList.remove('shimmer');
         }
