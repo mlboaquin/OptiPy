@@ -249,7 +249,41 @@ function updateMetrics(metrics) {
             <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>TIME REDUCTION:</b><br> ${getResultHTML(timeReduction, 's')}</li>
         `;
     }
+
+    showMetricsToast();
 }
+
+function showMetricsToast() {
+    const toast = document.getElementById('metrics-toast');
+    if (toast) {
+        toast.style.display = 'block';
+        // Hide after 6 seconds if not clicked
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 6000);
+    }
+}
+
+function hideMetricsToast() {
+    const toast = document.getElementById('metrics-toast');
+    if (toast) {
+        toast.style.display = 'none';
+    }
+}
+
+// When the toast is clicked, scroll to metrics and hide the toast
+document.addEventListener('DOMContentLoaded', function() {
+    const toast = document.getElementById('metrics-toast');
+    if (toast) {
+        toast.onclick = function() {
+            hideMetricsToast();
+            const metricsSection = document.getElementById('results-metrics');
+            if (metricsSection) {
+                metricsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        };
+    }
+});
 
 function handleImageUpload(event) {
     const uploadedFile = event.target.files?.[0] || null;
