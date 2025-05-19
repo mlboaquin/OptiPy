@@ -66,23 +66,20 @@ function pasteText() {
 
   
 function handleKeyDown(event) {
-    if (event.key === 'Enter') {
-      const pasteButton = document.querySelector('.paste-btn');
-      if (pasteButton) {
-        pasteButton.style.display = 'none';
-      }
-      
-      event.preventDefault(); 
-      optimize(); 
+    // Only prevent default and submit on Ctrl+Enter (or Cmd+Enter)
+    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+        event.preventDefault();
+        optimize();
     }
-  }
+    // For plain Enter, do nothing—let the browser insert a new line
+}
 
-  const inputArea = document.getElementById('input-text');
-  if (inputArea) {
+const inputArea = document.getElementById('input-text');
+if (inputArea) {
     inputArea.addEventListener('keydown', handleKeyDown);
-  }
+}
   
-  function hidePasteButtonOnPaste() {
+function hidePasteButtonOnPaste() {
     const inputArea = document.getElementById('input-text');
     const pasteButton = document.querySelector('.paste-btn');
   
