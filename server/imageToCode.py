@@ -1,9 +1,18 @@
-import pytesseract
+import requests
+import base64
+import json
 from PIL import Image
+import io
 import os
 
 class CodeExtractor:
     def __init__(self):
+        # OCR.space API key - replace with your own key
+        self.api_key = 'K82580810488957'  # This is a free demo key, replace with your own
+        self.api_url = 'https://api.ocr.space/parse/image'
+        
+        # Comment out Tesseract initialization
+        """
         # Set Tesseract path explicitly
         tesseract_path = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
         if os.path.exists(tesseract_path):
@@ -16,50 +25,55 @@ class CodeExtractor:
         
         # Configure Tesseract for code recognition
         self.custom_config = r'--oem 3 --psm 6'
+        """
     
     def extract_code_from_image(self, image_path):
-        """Extract code from an image using Tesseract OCR"""
+        """Extract code from an image using OCR.space API"""
         try:
-            # Load and preprocess the image
-            image = Image.open(image_path)
+            # Read image file
+            with open(image_path, 'rb') as image_file:
+                # Convert image to base64
+                base64_image = base64.b64encode(image_file.read()).decode('utf-8')
             
-            # Convert to grayscale
-            image = image.convert('L')
+            # Prepare API request payload
+            payload = {
+                'apikey': self.api_key,
+                'language': 'eng',
+                'isOverlayRequired': 'false',
+                'base64Image': f'data:image/jpeg;base64,{base64_image}',
+                'OCREngine': '2',  # Use the more accurate OCR engine
+                'detectOrientation': 'true',
+                'scale': 'true',
+                'isTable': 'false',
+                'isCreateSearchablePdf': 'false',
+                'isSearchablePdfHideTextLayer': 'false',
+                'filetype': 'jpg'
+            }
             
-            # Increase contrast
-            from PIL import ImageEnhance
-            enhancer = ImageEnhance.Contrast(image)
-            image = enhancer.enhance(2.0)
+            # Make API request
+            response = requests.post(self.api_url, data=payload)
+            response.raise_for_status()  # Raise exception for bad status codes
             
-            # Increase resolution while maintaining aspect ratio
-            scale_factor = 2
-            image = image.resize(
-                (image.width * scale_factor, image.height * scale_factor),
-                Image.Resampling.LANCZOS
-            )
+            # Parse response
+            result = response.json()
             
-            # Configure Tesseract with improved whitespace handling
-            self.custom_config = (
-                '--oem 3 '           # Use neural network mode
-                '--psm 6 '           # Assume uniform text block
-                '-c preserve_interword_spaces=1 '  # Preserve spaces between words
-                '-c preserve_whitespace=1 '        # Preserve all whitespace
-                '-c tessedit_char_blacklist=¬ '    # Remove problematic characters
-            )
+            if result['IsErroredOnProcessing']:
+                raise Exception(f"OCR API Error: {result.get('ErrorMessage', 'Unknown error')}")
             
-            # Extract text with raw output to preserve spacing
-            extracted_text = pytesseract.image_to_string(
-                image,
-                config=self.custom_config,
-                lang='eng'
-            )
+            # Extract text from response
+            extracted_text = ''
+            if 'ParsedResults' in result and len(result['ParsedResults']) > 0:
+                extracted_text = result['ParsedResults'][0]['ParsedText']
             
+            if not extracted_text.strip():
+                return None
+                
             return self._clean_extracted_text(extracted_text)
             
         except Exception as e:
             print(f"Error during extraction: {str(e)}")
             return None
-    
+
     def _clean_extracted_text(self, text):
         """Clean up the extracted text specifically for Python code"""
         if not text:
