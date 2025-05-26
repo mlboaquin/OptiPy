@@ -12,7 +12,7 @@ OptiPy/
 ├── IT Client/          # Information Technology Client Implementation
 ├── server/            # Server Implementation
 ├── dataset/           # Training and Test Data
-└── text_program/      # Text Processing Programs
+└── test_program/      # Text Processing Programs
 ```
 
 ## Key Components
