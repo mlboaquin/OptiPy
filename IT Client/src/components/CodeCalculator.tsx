@@ -7,7 +7,7 @@ export default function CodeCalculator() {
   const [code, setCode] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState('');
-  const [result, setResult] = useState<any>(null); // State to store the result
+  const [result, setResult] = useState<any>(null); // State to store the emissions measurement result
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export default function CodeCalculator() {
     if (loading) {
       let dots = 0;
       interval = setInterval(() => {
-        setStatus(`Calculating${'.'.repeat(dots % 5)}`);
+        setStatus(`Measuring emissions${'.'.repeat(dots % 5)}`);
         dots++;
       }, 500);
     }
@@ -64,21 +64,22 @@ export default function CodeCalculator() {
     reader.readAsArrayBuffer(uploadedFile);
   };
 
-  const handleOptimize = async () => {
+  // New function to handle emissions measurement instead of optimization
+  const handleMeasure = async () => {
     setLoading(true);
     try {
-      const response = await axios.post('http://127.0.0.1:5000/optimize', {
+      const response = await axios.post('http://127.0.0.1:5000/measure', {
         code: code
       }, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      setStatus('Code optimized successfully');
-      const { original_code, optimized_code, changes, metrics } = response.data;
-      setResult({ original_code, optimized_code, changes, metrics }); // Store the result
+      setStatus('Emissions measured successfully');
+      const { metrics } = response.data;
+      setResult({ metrics }); // Store only the metrics result
     } catch (error) {
-      setStatus('Error optimizing code');
+      setStatus('Error measuring emissions');
       console.error(error);
     } finally {
       setLoading(false);
@@ -92,7 +93,7 @@ export default function CodeCalculator() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Code Optimizer</h1>
+      <h1 className={styles.title}>Code Emissions Calculator</h1>
       <div className={styles.textareaGroup}>
         <Textarea
           value={code}
@@ -109,35 +110,19 @@ export default function CodeCalculator() {
             Upload Image
             <input type="file" hidden onChange={handleImageUpload} />
           </Button>
-          <Button onClick={handleOptimize}>Optimize</Button>
+          <Button onClick={handleMeasure}>Measure</Button>
           <Button onClick={handleClearResults} color="yellow">Clear Results</Button>
         </div>
       </div>
       <Text mt="sm" className={styles.status}>{status}</Text>
       {result && (
         <div className={styles.result}>
-          <Title order={2}>Optimization Result</Title>
+          <Title order={2}>Emissions Measurement Result</Title>
           <Divider my="sm" />
           <Card className={styles.resultSection}>
-            <Title order={3}>Original Code:</Title>
-            <pre className={styles.originalCode}>{result.original_code}</pre>
+            <Title order={3}>Emissions Metrics:</Title>
+            <pre className={styles.metrics}>{JSON.stringify(result.metrics, null, 2)}</pre>
           </Card>
-          <Divider my="sm" />
-          <Card className={styles.resultSection}>
-            <Title order={3}>Optimized Code:</Title>
-            <pre className={styles.optimizedCode}>{result.optimized_code}</pre>
-          </Card>
-          <Divider my="sm" />
-          <div className={styles.resultColumns}>
-            <Card className={styles.resultSection}>
-              <Title order={3}>Changes Made:</Title>
-              <pre className={styles.changes}>{JSON.stringify(result.changes, null, 2)}</pre>
-            </Card>
-            <Card className={styles.resultSection}>
-              <Title order={3}>Metrics:</Title>
-              <pre className={styles.metrics}>{JSON.stringify(result.metrics, null, 2)}</pre>
-            </Card>
-          </div>
         </div>
       )}
     </div>

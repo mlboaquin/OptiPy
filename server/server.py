@@ -132,6 +132,41 @@ def optimize_code():
     except Exception as e:
         return jsonify({'error': f'Unexpected error: {str(e)}'}), 500
 
+@app.route('/measure', methods=['POST'])
+def measure_emissions():
+    """Endpoint to receive code and return only emissions measurements."""
+    try:
+        data = request.get_json()
+        print(data)
+        if not data or 'code' not in data:
+            return jsonify({'error': 'No code provided'}), 400
+
+        code = data['code']
+
+        # Wrap code in process_data function
+        wrapped_code = create_wrapped_code(code)
+
+        # Measure emissions using multiprocessing
+        metrics = run_with_emissions_tracking(wrapped_code)
+
+        # Check for errors in measurements
+        if 'error' in metrics:
+            return jsonify({
+                'error': 'Error measuring emissions',
+                'details': metrics['error']
+            }), 500
+
+        return jsonify({
+            'metrics': {
+                'emissions': metrics['emissions'],
+                'energy': metrics['energy'],
+                'execution_time': metrics['execution_time']
+            }
+        })
+
+    except Exception as e:
+        return jsonify({'error': f'Unexpected error: {str(e)}'}), 500
+
 @app.route('/health', methods=['GET'])
 def health_check():
     """Simple health check endpoint."""
