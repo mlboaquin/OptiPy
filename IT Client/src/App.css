@@ -1,42 +1,88 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+@import url('https://fonts.googleapis.com/css2?family=Caesar+Dressing&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+body {
+  font-family: Poppins;
+  color: #3a3f52;
+  background-color: #57575705;
+  margin: 0;
+  padding: 0;
+}
+
+h2 {
+  font-size: 44px;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 25px;
+}
+
+h5 {
+  font-size: 16px;
+}
+
+p {
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: .05em;
+  color: #53627C;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 0px;
+}
+
+b {
+  font-weight: 700;
+}
+
+section {
+  padding: 100px 0px;
+}
+
+.title-block {
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 30px;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.title-block p {
+  font-size: 20px;
+  font-weight: 300;
+  color: #8da2b5;
+  margin-bottom: 0px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.divider {
+  padding: 2rem 0 0;
+  margin: 2rem 0 0;
+  border-top: 1px solid #3c3f45;
+}
+
+.divider-light {
+  padding: 2rem 0 0;
+  margin: 0 2rem 0 0;
+  border-top: 1px solid #edf1f2;
+}
+
+/* Responsive design */
+@media (max-width: 575.98px) {
+  h2 {
+    font-size: 32px;
   }
-  to {
-    transform: rotate(360deg);
+  
+  .title-block h2, p {
+    font-size: 28px;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+@media (max-width: 768px) {
+  h2 {
+    font-size: 36px;
   }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }
