@@ -274,6 +274,30 @@ export default function CodeCalculator() {
         <h2>OptiPy</h2>
       </div>
 
+      <div style={{ 
+        textAlign: 'center', 
+        marginBottom: '1rem', 
+        padding: '0.75rem', 
+        backgroundColor: 'rgba(255, 193, 7, 0.1)', 
+        border: '1px solid rgba(255, 193, 7, 0.3)', 
+        borderRadius: '8px',
+        maxWidth: '800px',
+        marginLeft: 'auto',
+        marginRight: 'auto'
+      }}>
+        <p style={{ 
+          margin: '0', 
+          fontSize: '14px', 
+          color: '#856404', 
+          fontFamily: 'Poppins',
+          fontWeight: '400'
+        }}>
+          <strong>⚠️ Disclaimer:</strong> This tool is designed to work exclusively with Python code. 
+          Code that requires external modules, dependencies, or file attachments may not function properly 
+          and could result in measurement errors.
+        </p>
+      </div>
+
       <div className={styles.squarebox}>
         <div className={styles.sbcontainer}>
           <div className={styles.sbcontainer2}>
