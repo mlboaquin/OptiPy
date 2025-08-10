@@ -298,6 +298,30 @@ export default function CodeCalculator() {
         </p>
       </div>
 
+      <div style={{ 
+        textAlign: 'center', 
+        marginBottom: '1rem', 
+        padding: '0.75rem', 
+        backgroundColor: 'rgba(52, 152, 219, 0.1)', 
+        border: '1px solid rgba(52, 152, 219, 0.3)', 
+        borderRadius: '8px',
+        maxWidth: '800px',
+        marginLeft: 'auto',
+        marginRight: 'auto'
+      }}>
+        <p style={{ 
+          margin: '0', 
+          fontSize: '14px', 
+          color: '#2c3e50', 
+          fontFamily: 'Poppins',
+          fontWeight: '400'
+        }}>
+          <strong>💡 Tip:</strong> You can paste your Python code directly or upload a screenshot of your code. 
+          The image-to-code feature will attempt to extract the code, but please review and edit the extracted 
+          text for accuracy before measuring emissions.
+        </p>
+      </div>
+
       <div className={styles.squarebox}>
         <div className={styles.sbcontainer}>
           <div className={styles.sbcontainer2}>
