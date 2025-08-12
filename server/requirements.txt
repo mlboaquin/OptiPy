@@ -7,3 +7,5 @@ Pillow>=9.0.0
 flask>=2.0.0
 flask-cors>=4.0.0  # For handling cross-origin requests
 requests>=2.31.0  # For making HTTP requests to OCR API
+psutil>=5.8.0  # For system and hardware information
+GPUtil>=1.4.0  # For GPU information (optional)

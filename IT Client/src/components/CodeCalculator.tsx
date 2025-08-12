@@ -5,10 +5,10 @@ import axios from 'axios';
 
 export default function CodeCalculator() {
   const [code, setCode] = useState('');
-  const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState('');
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [showCalculations, setShowCalculations] = useState(false);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -28,34 +28,9 @@ export default function CodeCalculator() {
 
   const handleDelete = () => {
     setCode('');
-    setFile(null);
     setStatus('');
-  };
-
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const uploadedFile = event.target.files?.[0] || null;
-    if (!uploadedFile) return;
-
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const byteArray = new Uint8Array(reader.result as ArrayBuffer);
-      const formData = new FormData();
-      formData.append('file', new Blob([byteArray], { type: uploadedFile.type }), uploadedFile.name);
-
-      try {
-        const response = await axios.post('http://127.0.0.1:5000/image-to-code', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-        setCode(response.data.code);
-        setStatus('Code extracted from image successfully, Please modify for innaccuracies');
-      } catch (error) {
-        setStatus('Error extracting code from image');
-        console.error(error);
-      }
-    };
-    reader.readAsArrayBuffer(uploadedFile);
+    setResult(null);
+    setShowCalculations(false);
   };
 
   const handleMeasure = async () => {
@@ -70,9 +45,7 @@ export default function CodeCalculator() {
       });
       setStatus('Emissions measured successfully');
       console.log('Full response:', response.data); // Debug log
-      const { metrics } = response.data;
-      console.log('Extracted metrics:', metrics); // Debug log
-      setResult({ metrics });
+      setResult(response.data);
     } catch (error) {
       setStatus('Error measuring emissions');
       console.error(error);
@@ -80,32 +53,88 @@ export default function CodeCalculator() {
       // For testing purposes, let's add some sample data when there's an error
       console.log('Adding sample data for testing...');
       const sampleData = {
-        emissions: {
-          cpu_energy: 0.0012,
-          gpu_energy: 0.0008,
-          ram_energy: 0.0003,
-          total_energy: 0.0023,
-          cpu_power: 45.2,
-          gpu_power: 12.8,
-          ram_power: 8.5,
-          total_power: 66.5,
-          cpu_emissions: 0.0004,
-          gpu_emissions: 0.0002,
-          ram_emissions: 0.0001,
-          total_emissions: 0.0007
+        metrics: {
+          emissions: 0.0007,
+          energy: 0.0023,
+          execution_time: 1.2345,
+          detailed_data: {
+            cpu_energy: 0.0012,
+            gpu_energy: 0.0008,
+            ram_energy: 0.0003,
+            total_energy: 0.0023,
+            cpu_power: 45.2,
+            gpu_power: 12.8,
+            ram_power: 8.5,
+            total_power: 66.5,
+            cpu_emissions: 0.0004,
+            gpu_emissions: 0.0002,
+            ram_emissions: 0.0001,
+            total_emissions: 0.0007
+          }
+        },
+        hardware_info: {
+          cpu: {
+            model: "Intel Core i7-10700K",
+            cores: 8,
+            threads: 16,
+            frequency: 3600
+          },
+          gpu: {
+            model: "NVIDIA RTX 3070",
+            memory: 8192
+          },
+          memory: {
+            total: 16,
+            available: 12.5,
+            percent: 22.5
+          },
+          platform: "Windows",
+          python_version: "3.9.0"
+        },
+                 calculations: {
+           energy_calculation: {
+             formula: 'Energy (kWh) = Power (W) × Time (hours)',
+             steps: [
+               'Execution time: 1.234500000000000 seconds = 3.430556 × 10^-4 hours',
+               'CPU Energy = 4.520000 × 10^1W × 3.430556 × 10^-4h = 1.200000 × 10^-3 kWh',
+               'GPU Energy = 1.280000 × 10^1W × 3.430556 × 10^-4h = 8.000000 × 10^-4 kWh',
+               'RAM Energy = 8.500000 × 10^0W × 3.430556 × 10^-4h = 3.000000 × 10^-4 kWh'
+             ]
+           },
+           emissions_calculation: {
+             formula: 'Emissions (kg CO2) = Energy (kWh) × Carbon Intensity (kg CO2/kWh)',
+             carbon_intensity: 0.5,
+             steps: [
+               'Using carbon intensity: 0.5 kg CO2/kWh (global average)',
+               'Total Emissions = 2.300000 × 10^-3 kWh × 0.5 kg CO2/kWh = 1.150000 × 10^-3 kg CO2'
+             ]
+           },
+          power_breakdown: {
+            cpu: 45.2,
+            gpu: 12.8,
+            ram: 8.5,
+            total: 66.5
+          },
+          energy_breakdown: {
+            cpu: 0.0012,
+            gpu: 0.0008,
+            ram: 0.0003,
+            total: 0.0023
+          },
+          emissions_breakdown: {
+            cpu: 0.0004,
+            gpu: 0.0002,
+            ram: 0.0001,
+            total: 0.0007
+          }
         },
         timing: {
           duration: 1.2345,
           start_time: Date.now() - 1234,
           end_time: Date.now()
-        },
-        hardware: {
-          cpu_model: "Intel Core i7-10700K",
-          gpu_model: "NVIDIA RTX 3070",
-          ram_total: 16
         }
       };
-      setResult({ metrics: sampleData });
+      setResult(sampleData);
     } finally {
       setLoading(false);
     }
@@ -267,6 +296,113 @@ export default function CodeCalculator() {
     return formattedText;
   };
 
+  const formatCalculations = (calculations: any) => {
+    if (!calculations) return '';
+    
+    // Helper function to format numbers in scientific notation
+    const formatScientific = (value: number) => {
+      if (value === 0) return '0';
+      const exp = Math.floor(Math.log10(Math.abs(value)));
+      const mantissa = value / Math.pow(10, exp);
+      return `${mantissa.toFixed(6)} × 10^${exp}`;
+    };
+    
+    let formattedText = '';
+    
+    // Energy Calculation Section
+    formattedText += '⚡ ENERGY CALCULATION\n';
+    formattedText += '═══════════════════\n\n';
+    formattedText += `Formula: ${calculations.energy_calculation.formula}\n\n`;
+    
+    calculations.energy_calculation.steps.forEach((step: string, index: number) => {
+      formattedText += `${index + 1}. ${step}\n`;
+    });
+    
+    formattedText += '\n';
+    
+    // Power Breakdown
+    formattedText += '🔌 POWER BREAKDOWN\n';
+    formattedText += '═══════════════════\n\n';
+    formattedText += `CPU Power:      ${formatScientific(calculations.power_breakdown.cpu)} W\n`;
+    formattedText += `GPU Power:      ${formatScientific(calculations.power_breakdown.gpu)} W\n`;
+    formattedText += `RAM Power:      ${formatScientific(calculations.power_breakdown.ram)} W\n`;
+    formattedText += `Total Power:    ${formatScientific(calculations.power_breakdown.total)} W\n\n`;
+    
+    // Energy Breakdown
+    formattedText += '⚡ ENERGY BREAKDOWN\n';
+    formattedText += '═══════════════════\n\n';
+    formattedText += `CPU Energy:     ${formatScientific(calculations.energy_breakdown.cpu)} kWh\n`;
+    formattedText += `GPU Energy:     ${formatScientific(calculations.energy_breakdown.gpu)} kWh\n`;
+    formattedText += `RAM Energy:     ${formatScientific(calculations.energy_breakdown.ram)} kWh\n`;
+    formattedText += `Total Energy:   ${formatScientific(calculations.energy_breakdown.total)} kWh\n\n`;
+    
+    // Emissions Calculation Section
+    formattedText += '🌱 EMISSIONS CALCULATION\n';
+    formattedText += '═══════════════════\n\n';
+    formattedText += `Formula: ${calculations.emissions_calculation.formula}\n\n`;
+    
+    calculations.emissions_calculation.steps.forEach((step: string, index: number) => {
+      formattedText += `${index + 1}. ${step}\n`;
+    });
+    
+    formattedText += '\n';
+    
+    // Emissions Breakdown
+    formattedText += '🌱 EMISSIONS BREAKDOWN\n';
+    formattedText += '═══════════════════\n\n';
+    formattedText += `CPU Emissions:  ${formatScientific(calculations.emissions_breakdown.cpu)} kg CO2\n`;
+    formattedText += `GPU Emissions:  ${formatScientific(calculations.emissions_breakdown.gpu)} kg CO2\n`;
+    formattedText += `RAM Emissions:  ${formatScientific(calculations.emissions_breakdown.ram)} kg CO2\n`;
+    formattedText += `Total Emissions: ${formatScientific(calculations.emissions_breakdown.total)} kg CO2\n`;
+    
+    return formattedText;
+  };
+
+  const formatHardwareInfo = (hardwareInfo: any) => {
+    if (!hardwareInfo) return '';
+    
+    let formattedText = '';
+    
+    formattedText += '💻 HARDWARE INFORMATION\n';
+    formattedText += '═══════════════════\n\n';
+    
+    // CPU Information
+    formattedText += '🖥️  CPU\n';
+    formattedText += '───\n';
+    formattedText += `Model:          ${hardwareInfo.cpu.model}\n`;
+    formattedText += `Cores:          ${hardwareInfo.cpu.cores}\n`;
+    formattedText += `Threads:        ${hardwareInfo.cpu.threads}\n`;
+    if (hardwareInfo.cpu.frequency > 0) {
+      formattedText += `Frequency:      ${(hardwareInfo.cpu.frequency / 1000).toFixed(2)} GHz\n`;
+    }
+    formattedText += '\n';
+    
+    // GPU Information
+    formattedText += '🎮 GPU\n';
+    formattedText += '───\n';
+    formattedText += `Model:          ${hardwareInfo.gpu.model}\n`;
+    if (hardwareInfo.gpu.memory > 0) {
+      formattedText += `Memory:         ${hardwareInfo.gpu.memory} MB\n`;
+    }
+    formattedText += '\n';
+    
+    // Memory Information
+    formattedText += '🧠 MEMORY\n';
+    formattedText += '───\n';
+    formattedText += `Total:          ${hardwareInfo.memory.total.toFixed(1)} GB\n`;
+    formattedText += `Available:      ${hardwareInfo.memory.available.toFixed(1)} GB\n`;
+    formattedText += `Usage:          ${hardwareInfo.memory.percent.toFixed(1)}%\n`;
+    formattedText += '\n';
+    
+    // System Information
+    formattedText += '🖥️  SYSTEM\n';
+    formattedText += '───\n';
+    formattedText += `Platform:       ${hardwareInfo.platform}\n`;
+    formattedText += `Python:         ${hardwareInfo.python_version}\n`;
+    
+    return formattedText;
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.titleBlock}>
@@ -298,30 +434,6 @@ export default function CodeCalculator() {
         </p>
       </div>
 
-      <div style={{ 
-        textAlign: 'center', 
-        marginBottom: '1rem', 
-        padding: '0.75rem', 
-        backgroundColor: 'rgba(52, 152, 219, 0.1)', 
-        border: '1px solid rgba(52, 152, 219, 0.3)', 
-        borderRadius: '8px',
-        maxWidth: '800px',
-        marginLeft: 'auto',
-        marginRight: 'auto'
-      }}>
-        <p style={{ 
-          margin: '0', 
-          fontSize: '14px', 
-          color: '#2c3e50', 
-          fontFamily: 'Poppins',
-          fontWeight: '400'
-        }}>
-          <strong>💡 Tip:</strong> You can paste your Python code directly or upload a screenshot of your code. 
-          The image-to-code feature will attempt to extract the code, but please review and edit the extracted 
-          text for accuracy before measuring emissions.
-        </p>
-      </div>
-
       <div className={styles.squarebox}>
         <div className={styles.sbcontainer}>
           <div className={styles.sbcontainer2}>
@@ -329,22 +441,10 @@ export default function CodeCalculator() {
               <textarea
                 value={code}
                 onChange={(event) => setCode(event.currentTarget.value)}
-                placeholder="Start by writing, pasting (CTRL + V) your text, or attaching a screenshot of your code.&#10;&#10;To measure emissions, press (CTRL + Enter)."
+                placeholder="Start by writing or pasting (CTRL + V) your Python code.&#10;&#10;To measure emissions, press (CTRL + Enter)."
                 className={styles.textarea}
               />
               <div className={styles.buttonGroup}>
-                <input 
-                  type="file" 
-                  id="image-input" 
-                  accept="image/*" 
-                  style={{ display: 'none' }} 
-                  onChange={handleImageUpload}
-                />
-                <div className={styles.upload} onClick={() => document.getElementById('image-input')?.click()}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24" fill="none">
-                    <path d="M14.2647 15.9377L12.5473 14.2346C11.758 13.4519 11.3633 13.0605 10.9089 12.9137C10.5092 12.7845 10.079 12.7845 9.67922 12.9137C9.22485 13.0605 8.83017 13.4519 8.04082 14.2346L4.04193 18.2622M14.2647 15.9377L14.606 15.5991C15.412 14.7999 15.8149 14.4003 16.2773 14.2545C16.6839 14.1262 17.1208 14.1312 17.5244 14.2688C17.9832 14.4253 18.3769 14.834 19.1642 15.6515L20 16.5001M14.2647 15.9377L18.22 19.9628M18.22 19.9628C17.8703 20 17.4213 20 16.8 20H7.2C6.07989 20 5.51984 20 5.09202 19.782C4.7157 19.5903 4.40973 19.2843 4.21799 18.908C4.12583 18.7271 4.07264 18.5226 4.04193 18.2622M18.22 19.9628C18.5007 19.9329 18.7175 19.8791 18.908 19.782C19.2843 19.5903 19.5903 19.2843 19.782 18.908C20 18.4802 20 17.9201 20 16.8V13M11 4H7.2C6.07989 4 5.51984 4 5.09202 4.21799C4.7157 4.40973 4.40973 4.71569 4.21799 5.09202C4 5.51984 4 6.0799 4 7.2V16.8C4 17.4466 4 17.9066 4.04193 18.2622M18 9V6M18 6V3M18 6H21M18 6H15" stroke="#4b4b4bc9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
                 <button className={styles.pasteBtn} onClick={handlePaste}>Paste Code</button>
               </div>
               <div className={styles.deleteIcon} onClick={handleDelete}>
@@ -378,6 +478,81 @@ export default function CodeCalculator() {
           </button>
         </div>
       </div>
+
+      {/* Calculations Section */}
+      {result && (
+        <div style={{ 
+          marginTop: '2rem',
+          maxWidth: '1200px',
+          marginLeft: 'auto',
+          marginRight: 'auto'
+        }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginBottom: '1rem'
+          }}>
+            <button
+              onClick={() => setShowCalculations(!showCalculations)}
+              style={{
+                padding: '0.75rem 1.5rem',
+                backgroundColor: showCalculations ? '#e74c3c' : '#27ae60',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: '500',
+                fontFamily: 'Poppins',
+                transition: 'background-color 0.3s ease'
+              }}
+            >
+              {showCalculations ? 'Hide Calculations' : 'Show Detailed Calculations'}
+            </button>
+          </div>
+
+          {showCalculations && (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '2rem',
+              marginTop: '1rem'
+            }}>
+              {/* Hardware Information */}
+              <div style={{
+                backgroundColor: '#f8f9fa',
+                border: '1px solid #dee2e6',
+                borderRadius: '12px',
+                padding: '1.5rem',
+                fontFamily: 'monospace',
+                fontSize: '12px',
+                lineHeight: '1.6',
+                whiteSpace: 'pre-wrap',
+                maxHeight: '500px',
+                overflowY: 'auto'
+              }}>
+                {result.hardware_info ? formatHardwareInfo(result.hardware_info) : 'Hardware information not available'}
+              </div>
+
+              {/* Detailed Calculations */}
+              <div style={{
+                backgroundColor: '#f8f9fa',
+                border: '1px solid #dee2e6',
+                borderRadius: '12px',
+                padding: '1.5rem',
+                fontFamily: 'monospace',
+                fontSize: '12px',
+                lineHeight: '1.6',
+                whiteSpace: 'pre-wrap',
+                maxHeight: '500px',
+                overflowY: 'auto'
+              }}>
+                {result.calculations ? formatCalculations(result.calculations) : 'Calculation details not available'}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
