@@ -140,160 +140,16 @@ export default function CodeCalculator() {
     }
   };
 
-  const formatMetrics = (metrics: any) => {
-    if (!metrics) return '';
+  const formatMetrics = (result: any) => {
+    if (!result) return { emissions: 0, energy: 0 };
     
-    console.log('Raw metrics data:', metrics); // Debug log
+    console.log('Raw result data:', result); // Debug log
     
-    let formattedText = '';
+    // Extract emissions and energy from the simplified response
+    const emissions = result.emissions || 0;
+    const energy = result.energy || 0;
     
-    // Helper function to format numbers in scientific notation
-    const formatScientific = (value: number) => {
-      if (value === 0) return '0';
-      const exp = Math.floor(Math.log10(Math.abs(value)));
-      const mantissa = value / Math.pow(10, exp);
-      return `${mantissa.toFixed(6)} × 10^${exp}`;
-    };
-    
-    // Check if this is the simple structure (emissions, energy, execution_time)
-    if (metrics.emissions !== undefined || metrics.energy !== undefined || metrics.execution_time !== undefined) {
-      formattedText += '🌱 EMISSIONS DATA\n';
-      formattedText += '═══════════════════\n\n';
-      
-      if (metrics.emissions !== undefined) {
-        formattedText += `EMISSION:\n${formatScientific(Number(metrics.emissions))} kg CO2eq\n\n`;
-      }
-      
-      if (metrics.energy !== undefined) {
-        formattedText += `ENERGY:\n${formatScientific(Number(metrics.energy))} kWh\n\n`;
-      }
-      
-      if (metrics.execution_time !== undefined) {
-        formattedText += `EXECUTION TIME:\n${Number(metrics.execution_time).toFixed(15)} s\n`;
-      }
-      
-      return formattedText;
-    }
-    
-    // Handle different response structures for complex data
-    const emissionsData = metrics.emissions || metrics;
-    const timingData = metrics.timing || {};
-    const hardwareData = metrics.hardware || {};
-    
-    console.log('Emissions data:', emissionsData); // Debug log
-    console.log('Timing data:', timingData); // Debug log
-    console.log('Hardware data:', hardwareData); // Debug log
-    
-    // Check if we have any data at all
-    const hasEmissionsData = emissionsData && Object.keys(emissionsData).length > 0;
-    const hasTimingData = Object.keys(timingData).length > 0;
-    const hasHardwareData = Object.keys(hardwareData).length > 0;
-    
-    console.log('Has emissions data:', hasEmissionsData); // Debug log
-    console.log('Has timing data:', hasTimingData); // Debug log
-    console.log('Has hardware data:', hasHardwareData); // Debug log
-    
-    // Format emissions data
-    if (hasEmissionsData) {
-      formattedText += '🌱 EMISSIONS DATA\n';
-      formattedText += '═══════════════════\n\n';
-      
-      // Energy data
-      if (emissionsData.cpu_energy !== undefined) {
-        formattedText += `CPU Energy:     ${Number(emissionsData.cpu_energy).toFixed(4)} kWh\n`;
-      }
-      if (emissionsData.gpu_energy !== undefined) {
-        formattedText += `GPU Energy:     ${Number(emissionsData.gpu_energy).toFixed(4)} kWh\n`;
-      }
-      if (emissionsData.ram_energy !== undefined) {
-        formattedText += `RAM Energy:     ${Number(emissionsData.ram_energy).toFixed(4)} kWh\n`;
-      }
-      if (emissionsData.total_energy !== undefined) {
-        formattedText += `Total Energy:   ${Number(emissionsData.total_energy).toFixed(4)} kWh\n`;
-      }
-      if (emissionsData.energy !== undefined) {
-        formattedText += `Energy:         ${Number(emissionsData.energy).toFixed(4)} kWh\n`;
-      }
-      
-      formattedText += '\n';
-      
-      // Power data
-      if (emissionsData.cpu_power !== undefined) {
-        formattedText += `CPU Power:      ${Number(emissionsData.cpu_power).toFixed(2)} W\n`;
-      }
-      if (emissionsData.gpu_power !== undefined) {
-        formattedText += `GPU Power:      ${Number(emissionsData.gpu_power).toFixed(2)} W\n`;
-      }
-      if (emissionsData.ram_power !== undefined) {
-        formattedText += `RAM Power:      ${Number(emissionsData.ram_power).toFixed(2)} W\n`;
-      }
-      if (emissionsData.total_power !== undefined) {
-        formattedText += `Total Power:    ${Number(emissionsData.total_power).toFixed(2)} W\n`;
-      }
-      if (emissionsData.power !== undefined) {
-        formattedText += `Power:          ${Number(emissionsData.power).toFixed(2)} W\n`;
-      }
-      
-      formattedText += '\n';
-      
-      // Emissions data
-      if (emissionsData.cpu_emissions !== undefined) {
-        formattedText += `CPU Emissions:  ${Number(emissionsData.cpu_emissions).toFixed(4)} kgCO2\n`;
-      }
-      if (emissionsData.gpu_emissions !== undefined) {
-        formattedText += `GPU Emissions:  ${Number(emissionsData.gpu_emissions).toFixed(4)} kgCO2\n`;
-      }
-      if (emissionsData.ram_emissions !== undefined) {
-        formattedText += `RAM Emissions:  ${Number(emissionsData.ram_emissions).toFixed(4)} kgCO2\n`;
-      }
-      if (emissionsData.total_emissions !== undefined) {
-        formattedText += `Total Emissions: ${Number(emissionsData.total_emissions).toFixed(4)} kgCO2\n`;
-      }
-      if (emissionsData.emissions !== undefined) {
-        formattedText += `Emissions:      ${Number(emissionsData.emissions).toFixed(4)} kgCO2\n`;
-      }
-    }
-    
-    // Format timing data
-    if (hasTimingData) {
-      formattedText += '\n⏱️  TIMING DATA\n';
-      formattedText += '═══════════════════\n\n';
-      
-      if (timingData.duration !== undefined) {
-        formattedText += `Duration:       ${Number(timingData.duration).toFixed(4)} seconds\n`;
-      }
-      if (timingData.start_time !== undefined) {
-        formattedText += `Start Time:     ${new Date(timingData.start_time).toLocaleString()}\n`;
-      }
-      if (timingData.end_time !== undefined) {
-        formattedText += `End Time:       ${new Date(timingData.end_time).toLocaleString()}\n`;
-      }
-    }
-    
-    // Format hardware data
-    if (hasHardwareData) {
-      formattedText += '\n💻 HARDWARE INFO\n';
-      formattedText += '═══════════════════\n\n';
-      
-      if (hardwareData.cpu_model) {
-        formattedText += `CPU Model:      ${hardwareData.cpu_model}\n`;
-      }
-      if (hardwareData.gpu_model) {
-        formattedText += `GPU Model:      ${hardwareData.gpu_model}\n`;
-      }
-      if (hardwareData.ram_total) {
-        formattedText += `Total RAM:      ${hardwareData.ram_total} GB\n`;
-      }
-    }
-    
-    // If no structured data found, show raw data
-    if (!hasEmissionsData && !hasTimingData && !hasHardwareData) {
-      formattedText = '📊 MEASUREMENT RESULTS\n═══════════════════\n\n';
-      formattedText += JSON.stringify(metrics, null, 2);
-    }
-    
-    console.log('Final formatted text:', formattedText); // Debug log
-    return formattedText;
+    return { emissions, energy };
   };
 
   const formatCalculations = (calculations: any) => {
@@ -358,53 +214,128 @@ export default function CodeCalculator() {
     return formattedText;
   };
 
-  const formatHardwareInfo = (hardwareInfo: any) => {
-    if (!hardwareInfo) return '';
+  const formatStaticAnalysis = (staticAnalysis: any) => {
+    if (!staticAnalysis) return '';
     
     let formattedText = '';
     
-    formattedText += '💻 HARDWARE INFORMATION\n';
+    formattedText += '🔍 STATIC CODE ANALYSIS\n';
     formattedText += '═══════════════════\n\n';
     
-    // CPU Information
-    formattedText += '🖥️  CPU\n';
+    // Complexity Information
+    formattedText += '📊 COMPLEXITY METRICS\n';
     formattedText += '───\n';
-    formattedText += `Model:          ${hardwareInfo.cpu.model}\n`;
-    formattedText += `Cores:          ${hardwareInfo.cpu.cores}\n`;
-    formattedText += `Threads:        ${hardwareInfo.cpu.threads}\n`;
-    if (hardwareInfo.cpu.frequency > 0) {
-      formattedText += `Frequency:      ${(hardwareInfo.cpu.frequency / 1000).toFixed(2)} GHz\n`;
+    formattedText += `Time Complexity:     ${staticAnalysis.time_complexity}\n`;
+    formattedText += `Space Complexity:    ${staticAnalysis.space_complexity}\n`;
+    formattedText += `Cyclomatic Complexity: ${staticAnalysis.cyclomatic_complexity}\n`;
+    formattedText += `Eco Score:           ${staticAnalysis.eco_score.toFixed(1)}/100\n`;
+    formattedText += `Confidence:          ${(staticAnalysis.confidence * 100).toFixed(1)}%\n\n`;
+    
+    // Complexity Explanations
+    formattedText += '📚 COMPLEXITY EXPLANATIONS\n';
+    formattedText += '───\n';
+    formattedText += `Time Complexity (${staticAnalysis.time_complexity}):\n`;
+    formattedText += `  How execution time grows with input size.\n`;
+    formattedText += `  O(1) = constant, O(N) = linear, O(N²) = quadratic\n\n`;
+    
+    formattedText += `Space Complexity (${staticAnalysis.space_complexity}):\n`;
+    formattedText += `  How memory usage grows with input size.\n`;
+    formattedText += `  O(1) = constant memory, O(N) = linear memory\n\n`;
+    
+    formattedText += `Cyclomatic Complexity (${staticAnalysis.cyclomatic_complexity}):\n`;
+    formattedText += `  Number of decision paths in code.\n`;
+    formattedText += `  Lower = simpler, Higher = more complex\n\n`;
+    
+    formattedText += `Eco Score (${staticAnalysis.eco_score.toFixed(1)}/100):\n`;
+    formattedText += `  Energy efficiency rating.\n`;
+    formattedText += `  100 = very efficient, 0 = inefficient\n\n`;
+    
+    formattedText += `Confidence (${(staticAnalysis.confidence * 100).toFixed(1)}%):\n`;
+    formattedText += `  Analysis reliability.\n`;
+    formattedText += `  Higher = more accurate estimate\n\n`;
+    
+    // Suggestions
+    if (staticAnalysis.suggestions && staticAnalysis.suggestions.length > 0) {
+      formattedText += '💡 OPTIMIZATION SUGGESTIONS\n';
+      formattedText += '───\n';
+      staticAnalysis.suggestions.forEach((suggestion: string, index: number) => {
+        formattedText += `${index + 1}. ${suggestion}\n`;
+      });
     }
-    formattedText += '\n';
     
-    // GPU Information
-    formattedText += '🎮 GPU\n';
+    return formattedText;
+  };
+
+  const formatMeasurementExplanations = (result: any) => {
+    if (!result) return '';
+    
+    const emissions = result.emissions || 0;
+    const energy = result.energy || 0;
+    
+    let formattedText = '';
+    
+    formattedText += '📊 MEASUREMENT EXPLANATIONS\n';
+    formattedText += '═══════════════════\n\n';
+    
+    // Carbon Emissions Section
+    formattedText += '🌱 CARBON EMISSIONS\n';
     formattedText += '───\n';
-    formattedText += `Model:          ${hardwareInfo.gpu.model}\n`;
-    if (hardwareInfo.gpu.memory > 0) {
-      formattedText += `Memory:         ${hardwareInfo.gpu.memory} MB\n`;
+    formattedText += `Your Code Produced: ${emissions.toFixed(6)} kg CO₂\n\n`;
+    
+    formattedText += 'What this means:\n';
+    formattedText += `• Equivalent to driving ${(emissions * 1000 / 120).toFixed(2)} meters by car\n`;
+    formattedText += `• Equal to ${(emissions * 1000 / 22).toFixed(2)} trees absorbing CO₂ for a day\n`;
+    formattedText += `• Same as sending ${(emissions * 1000 / 4).toFixed(0)} emails\n`;
+    formattedText += `• ${emissions < 0.001 ? 'Very low' : emissions < 0.01 ? 'Low' : emissions < 0.1 ? 'Moderate' : 'High'} environmental impact\n\n`;
+    
+    // Energy Consumption Section
+    formattedText += '⚡ ENERGY CONSUMPTION\n';
+    formattedText += '───\n';
+    formattedText += `Your Code Used: ${energy.toFixed(6)} kWh\n\n`;
+    
+    formattedText += 'What this means:\n';
+    formattedText += `• Powers a 60W light bulb for ${(energy * 1000 / 60).toFixed(1)} hours\n`;
+    formattedText += `• Charges a smartphone ${(energy * 1000 / 0.01).toFixed(0)} times\n`;
+    formattedText += `• Runs a laptop for ${(energy * 1000 / 50).toFixed(1)} hours\n`;
+    formattedText += `• ${energy < 0.001 ? 'Very efficient' : energy < 0.01 ? 'Efficient' : energy < 0.1 ? 'Moderate' : 'Energy intensive'} code\n\n`;
+    
+    // Environmental Impact
+    formattedText += '🌍 ENVIRONMENTAL IMPACT\n';
+    formattedText += '───\n';
+    const impactLevel = emissions < 0.001 ? 'Minimal' : 
+                       emissions < 0.01 ? 'Low' : 
+                       emissions < 0.1 ? 'Moderate' : 'Significant';
+    
+    formattedText += `Overall Impact: ${impactLevel}\n\n`;
+    
+    if (emissions < 0.001) {
+      formattedText += '✅ Your code is very environmentally friendly!\n';
+      formattedText += '   Minimal carbon footprint and energy usage.\n\n';
+    } else if (emissions < 0.01) {
+      formattedText += '✅ Good environmental performance.\n';
+      formattedText += '   Low impact with room for minor optimizations.\n\n';
+    } else if (emissions < 0.1) {
+      formattedText += '⚠️  Moderate environmental impact.\n';
+      formattedText += '   Consider optimizing for better efficiency.\n\n';
+    } else {
+      formattedText += '⚠️  High environmental impact.\n';
+      formattedText += '   Significant optimization opportunities exist.\n\n';
     }
-    formattedText += '\n';
     
-    // Memory Information
-    formattedText += '🧠 MEMORY\n';
+    // Optimization Tips
+    formattedText += '💡 QUICK OPTIMIZATION TIPS\n';
     formattedText += '───\n';
-    formattedText += `Total:          ${hardwareInfo.memory.total.toFixed(1)} GB\n`;
-    formattedText += `Available:      ${hardwareInfo.memory.available.toFixed(1)} GB\n`;
-    formattedText += `Usage:          ${hardwareInfo.memory.percent.toFixed(1)}%\n`;
-    formattedText += '\n';
-    
-    // System Information
-    formattedText += '🖥️  SYSTEM\n';
-    formattedText += '───\n';
-    formattedText += `Platform:       ${hardwareInfo.platform}\n`;
-    formattedText += `Python:         ${hardwareInfo.python_version}\n`;
+    formattedText += '• Use efficient algorithms (lower time complexity)\n';
+    formattedText += '• Minimize memory usage (lower space complexity)\n';
+    formattedText += '• Avoid unnecessary loops and calculations\n';
+    formattedText += '• Use built-in functions when possible\n';
+    formattedText += '• Consider caching for repeated operations\n';
     
     return formattedText;
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} style={{ marginTop: '2rem', marginBottom: '2rem' }}>
       <div className={styles.titleBlock}>
         <img src="/logo.svg" width="100px" alt="Logo" />
         <h2>OptiPy</h2>
@@ -455,17 +386,44 @@ export default function CodeCalculator() {
             </div>
 
             <div className={styles.output}>
-              <textarea
-                readOnly
-                value={result ? formatMetrics(result.metrics) : ''}
-                placeholder="Your emissions measurement results will appear here"
-                className={styles.textarea}
-              />
-              <div className={styles.deleteIcon} onClick={() => navigator.clipboard.writeText(result ? formatMetrics(result.metrics) : '')}>
-                <svg width="22" height="26" viewBox="0 0 27 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7.6665 5.02789V23.1952C7.6665 23.9983 7.9738 24.7684 8.52078 25.3363C9.06776 25.9041 9.80962 26.2231 10.5832 26.2231H22.2498C23.0234 26.2231 23.7653 25.9041 24.3122 25.3363C24.8592 24.7684 25.1665 23.9983 25.1665 23.1952V9.9361C25.1665 9.53272 25.0888 9.13342 24.938 8.76165C24.7873 8.38987 24.5665 8.05312 24.2886 7.77116L19.4542 2.86295C18.9093 2.30984 18.1775 2.0001 17.4155 2H10.5832C9.80962 2 9.06776 2.31901 8.52078 2.88685C7.9738 3.45469 7.6665 4.22484 7.6665 5.02789Z" stroke="#3a7f0d" strokeOpacity="0.96" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M19.3333 26.223V29.2509C19.3333 30.0539 19.026 30.8241 18.479 31.3919C17.932 31.9597 17.1901 32.2787 16.4166 32.2787H4.74992C3.97637 32.2787 3.2345 31.9597 2.68752 31.3919C2.14054 30.8241 1.83325 30.0539 1.83325 29.2509V12.5975C1.83325 11.7944 2.14054 11.0243 2.68752 10.4564C3.2345 9.88859 3.97637 9.56958 4.74992 9.56958H7.66659" stroke="#3a7f0d" strokeOpacity="0.96" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%',
+                padding: '20px',
+                textAlign: 'center'
+              }}>
+                {result ? (
+                  <>
+                    <div style={{
+                      fontSize: '24px',
+                      fontWeight: '600',
+                      color: '#2c3e50',
+                      marginBottom: '20px',
+                      fontFamily: 'Poppins'
+                    }}>
+                      Carbon Emission: {formatMetrics(result).emissions.toFixed(6)} kg CO₂
+                    </div>
+                    <div style={{
+                      fontSize: '20px',
+                      fontWeight: '500',
+                      color: '#34495e',
+                      fontFamily: 'Poppins'
+                    }}>
+                      Energy Consumption: {formatMetrics(result).energy.toFixed(6)} kWh
+                    </div>
+                  </>
+                ) : (
+                  <div style={{
+                    fontSize: '18px',
+                    color: '#7f8c8d',
+                    fontFamily: 'Poppins'
+                  }}>
+                    Your emissions measurement results will appear here
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -479,8 +437,8 @@ export default function CodeCalculator() {
         </div>
       </div>
 
-      {/* Calculations Section */}
-      {result && (
+      {/* Static Analysis Section */}
+      {result && result.static_analysis && (
         <div style={{ 
           marginTop: '2rem',
           maxWidth: '1200px',
@@ -507,7 +465,7 @@ export default function CodeCalculator() {
                 transition: 'background-color 0.3s ease'
               }}
             >
-              {showCalculations ? 'Hide Calculations' : 'Show Detailed Calculations'}
+              {showCalculations ? 'Hide Analysis Details' : 'Show Analysis Details'}
             </button>
           </div>
 
@@ -516,9 +474,13 @@ export default function CodeCalculator() {
               display: 'grid',
               gridTemplateColumns: '1fr 1fr',
               gap: '2rem',
-              marginTop: '1rem'
+              marginTop: '1rem',
+              maxWidth: '1200px',
+              width: '100%',
+              marginLeft: 'auto',
+              marginRight: 'auto'
             }}>
-              {/* Hardware Information */}
+              {/* Static Analysis Details */}
               <div style={{
                 backgroundColor: '#f8f9fa',
                 border: '1px solid #dee2e6',
@@ -529,12 +491,13 @@ export default function CodeCalculator() {
                 lineHeight: '1.6',
                 whiteSpace: 'pre-wrap',
                 maxHeight: '500px',
-                overflowY: 'auto'
+                overflowY: 'auto',
+                boxSizing: 'border-box'
               }}>
-                {result.hardware_info ? formatHardwareInfo(result.hardware_info) : 'Hardware information not available'}
+                {formatStaticAnalysis(result.static_analysis)}
               </div>
 
-              {/* Detailed Calculations */}
+              {/* Measurement Explanations */}
               <div style={{
                 backgroundColor: '#f8f9fa',
                 border: '1px solid #dee2e6',
@@ -545,9 +508,10 @@ export default function CodeCalculator() {
                 lineHeight: '1.6',
                 whiteSpace: 'pre-wrap',
                 maxHeight: '500px',
-                overflowY: 'auto'
+                overflowY: 'auto',
+                boxSizing: 'border-box'
               }}>
-                {result.calculations ? formatCalculations(result.calculations) : 'Calculation details not available'}
+                {formatMeasurementExplanations(result)}
               </div>
             </div>
           )}
