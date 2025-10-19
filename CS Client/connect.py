@@ -44,8 +44,11 @@ def image_to_code():
         os.remove(tmp.name)
         if extracted_code is None:
             return jsonify({'error': 'Could not extract code'}), 500
+        print("EXTRACTED CODE:", extracted_code)
         return jsonify({'code': extracted_code})
+        
     except Exception as e:
+        print("ERROR:", e)
         return jsonify({'error': str(e)}), 500
 
 #----------------------------------------------- OPTIMIZE -----------------------------------------------

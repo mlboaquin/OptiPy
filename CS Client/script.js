@@ -1,5 +1,3 @@
-let typewriterTimeout = null;
-let optimizingInterval = null;
 
 function copyText() {
 
@@ -52,17 +50,79 @@ function clearText() {
     
     
 }
-
-function pasteText() {
-    // Hide the paste button once clicked
+/**
+ * Reads text from the clipboard and pastes it into the CodeMirror editor.
+ */
+// Robust paste for CodeMirror 5: tries async clipboard; if blocked, uses a hidden catcher.
+async function pasteText() {
     const pasteButton = document.querySelector('.paste-btn');
-    pasteButton.style.display = 'none'; // Hide the paste button
-    
-    // Paste the clipboard content into the textarea
-    navigator.clipboard.readText().then(text => {
-      document.querySelector('textarea').value = text;
-    });
-}
+    pasteButton && (pasteButton.style.display = 'none'); // optional UX: hide after first use
+  
+    // 1) Try async clipboard API first
+    try {
+      const text = await navigator.clipboard.readText();
+      insertIntoInputEditor(text);
+      return;
+    } catch (err) {
+      // fall through to manual capture
+      console.warn('readText() blocked or failed, using manual capture:', err);
+    }
+  
+    // 2) Manual fallback: focus off-screen catcher so Ctrl/Cmd+V lands there
+    const catcher = document.getElementById('paste-capture');
+    if (!catcher) {
+      alert('Clipboard access blocked. Click in the editor and press Ctrl+V / Cmd+V.');
+      if (window.inputEditor?.focus) window.inputEditor.focus();
+      return;
+    }
+  
+    catcher.value = '';
+    catcher.focus();
+    catcher.select();
+  
+    // Ask the user once
+    alert('Press Ctrl+V (Cmd+V on Mac) now to paste. We will insert it into the editor.');
+  
+    const onPaste = (evt) => {
+      evt.preventDefault();
+      const text = evt.clipboardData?.getData('text') ?? catcher.value;
+      cleanup();
+      insertIntoInputEditor(text);
+    };
+    const onBlur = () => cleanup();
+  
+    function cleanup() {
+      catcher.removeEventListener('paste', onPaste, { once: true });
+      catcher.removeEventListener('blur', onBlur, { once: true });
+      catcher.value = '';
+    }
+  
+    catcher.addEventListener('paste', onPaste, { once: true });
+    catcher.addEventListener('blur', onBlur, { once: true });
+  }
+  
+  // Insert into CodeMirror at the cursor/selection (not replacing whole doc)
+  function insertIntoInputEditor(text) {
+    if (!text) {
+      window.inputEditor?.focus?.();
+      return;
+    }
+    if (window.inputEditor?.getDoc) {
+      const doc = inputEditor.getDoc();
+      doc.replaceSelection(text, 'around'); // proper insert at selection/cursor
+      inputEditor.focus();
+    } else {
+      // fallback to raw textarea
+      const ta = document.getElementById('input-text');
+      if (ta) {
+        const start = ta.selectionStart ?? ta.value.length;
+        const end   = ta.selectionEnd   ?? ta.value.length;
+        ta.setRangeText(text, start, end, 'end');
+        ta.focus();
+      }
+    }
+  }
+  
 
   
 function handleKeyDown(event) {
@@ -82,30 +142,46 @@ if (inputArea) {
 function hidePasteButtonOnPaste() {
     const inputArea = document.getElementById('input-text');
     const pasteButton = document.querySelector('.paste-btn');
+    const uploadButton = document.querySelector('.upload');
   
-    if (inputArea && pasteButton) {
+    if (inputArea && pasteButton && uploadButton) {
       inputArea.addEventListener('paste', () => {
         pasteButton.style.display = 'none';
+        uploadButton.style.display = 'none';
+      });
+    }
+}
+
+function hideButtonsOnInput() {
+    const inputArea = document.getElementById('input-text');
+    const pasteButton = document.querySelector('.paste-btn');
+    const uploadButton = document.querySelector('.upload');
+  
+    if (inputArea && pasteButton && uploadButton) {
+      inputArea.addEventListener('input', () => {
+        pasteButton.style.display = 'none';
+        uploadButton.style.display = 'none';
       });
     }
 }
   
   
 hidePasteButtonOnPaste();
+hideButtonsOnInput();
 async function optimize() {
-    const inputText = document.getElementById('input-text').value;
+    const inputText = inputEditor.getValue(); // Get text from CodeMirror input editor
     const outputText = document.getElementById('output-text');
     const optimizeButton = document.getElementById('optimize-btn');
 
     // No confirmation dialog here
 
     // Show loading message with shimmer
+    outputEditor.setValue('Please wait while your code is being generated...'); // Set text in CodeMirror output editor
     outputText.classList.add('shimmer');
     if (optimizeButton) {
         optimizeButton.disabled = true;
         optimizeButton.classList.add('shimmer');
     }
-    outputText.value = 'Please wait while your code is being generated...';
 
     try {
         const response = await fetch('http://127.0.0.1:5000/optimize', {
@@ -121,23 +197,23 @@ async function optimize() {
             data = JSON.parse(text);
         } catch (e) {
             outputText.classList.remove('shimmer');
-            outputText.value = 'Server returned invalid JSON.';
+            outputEditor.setValue('Server returned invalid JSON.'); // Set text in CodeMirror output editor
             return;
         }
 
         if (response.ok) {
             outputText.classList.remove('shimmer');
             if (data.optimized_code) {
-                outputText.value = data.optimized_code;
+                outputEditor.setValue(data.optimized_code); // Set text in CodeMirror output editor
             } else if (data.error) {
                 // Show error and details if available
                 let errorMsg = `Error: ${data.error}`;
                 if (data.details) {
                     errorMsg += "\n\nDetails:\n" + data.details.join('\n');
                 }
-                outputText.value = errorMsg;
+                outputEditor.setValue(errorMsg); // Set text in CodeMirror output editor
             } else {
-                outputText.value = 'No optimized code returned.';
+                outputEditor.setValue('No optimized code returned.'); // Set text in CodeMirror output editor
             }
 
             if (data.changes) updateChanges(data.changes);
@@ -148,12 +224,12 @@ async function optimize() {
             if (data.details) {
                 errorMsg += "\n\nDetails:\n" + data.details.join('\n');
             }
-            outputText.value = errorMsg;
+            outputEditor.setValue(errorMsg); // Set text in CodeMirror output editor
         }
     } catch (error) {
         console.error('Error:', error);
         outputText.classList.remove('shimmer');
-        outputText.value = 'Error connecting to the server. Please try again.';
+        outputEditor.setValue('Error connecting to the server. Please try again.'); // Set text in CodeMirror output editor
     } finally {
         if (optimizeButton) {
             optimizeButton.disabled = false;
@@ -176,13 +252,11 @@ function updateChanges(changes) {
         const li = document.createElement('li');
         li.textContent = change;
         li.style.fontWeight = 'normal';
+        li.style.marginLeft = '2em';
         li.style.fontSize = '16px';
 
-        if (index % 2 === 0) {
-            revisionsBox1.appendChild(li);
-        } else {
-            revisionsBox2.appendChild(li);
-        }
+        revisionsBox1.appendChild(li);
+
     });
 
     // Show fallback message if no changes
@@ -287,8 +361,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function handleImageUpload(event) {
     const uploadedFile = event.target.files?.[0] || null;
-    if (!uploadedFile) return;
+    if (!uploadedFile) {
+        console.log('No file selected');
+        return;
+    }
 
+    console.log('Uploading file:', uploadedFile.name, 'Size:', uploadedFile.size);
+    console.log('Input editor available:', !!window.inputEditor);
+    console.log('Output editor available:', !!window.outputEditor);
+    
+    // Wait for editors to be ready if they're not available yet
+    if (!window.inputEditor || !window.outputEditor) {
+        console.log('Editors not ready, waiting...');
+        setTimeout(() => {
+            console.log('Retrying after timeout - Input editor:', !!window.inputEditor, 'Output editor:', !!window.outputEditor);
+        }, 1000);
+    }
+    
     const formData = new FormData();
     formData.append('file', uploadedFile);
 
@@ -296,22 +385,80 @@ function handleImageUpload(event) {
         method: 'POST',
         body: formData
     })
-    .then(res => res.json())
+    .then(res => {
+        console.log('Response status:', res.status);
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+    })
     .then(data => {
+        console.log('Received data:', data);
         if (data.error) {
-            document.getElementById('output-text').value = `Error: ${data.error}`;
-        } else {
-            const inputTextArea = document.getElementById('input-text');
-            typeWriterEffect(inputTextArea, data.code, 10); // Typewriter effect
+            console.error('Server error:', data.error);
+            // Show error in output editor
+            if (window.outputEditor) {
+                window.outputEditor.setValue(`Error: ${data.error}`);
+            } else {
+                document.getElementById('output-text').value = `Error: ${data.error}`;
+            }
+        } else if (data.code) {
+            console.log('Extracted code:', data.code);
+            // Set the extracted code in the input editor
+            setCodeInInputEditor(data.code);
+            
+            // Hide paste button and upload button
             document.querySelector('.paste-btn').style.display = 'none';
             document.querySelector('.button-group svg').style.display = 'none';
             alert('Please check your code for accuracy before optimizing.');
+        } else {
+            console.error('No code extracted from image');
+            if (window.outputEditor) {
+                window.outputEditor.setValue('No code could be extracted from the image. Please try a clearer image.');
+            } else {
+                document.getElementById('output-text').value = 'No code could be extracted from the image. Please try a clearer image.';
+            }
         }
     })
     .catch(err => {
         console.error('Error:', err);
-        document.getElementById('output-text').value = 'Something went wrong. Please try again.';
+        // Show error in output editor
+        if (window.outputEditor) {
+            window.outputEditor.setValue(`Error: ${err.message}`);
+        } else {
+            document.getElementById('output-text').value = `Error: ${err.message}`;
+        }
     });
+}
+
+function setCodeInInputEditor(code, retryCount = 0) {
+    console.log('Attempting to set code in input editor, retry:', retryCount);
+    
+    // Try CodeMirror editor first
+    if (window.inputEditor && window.inputEditor.setValue) {
+        console.log('Setting code in CodeMirror input editor');
+        window.inputEditor.setValue(code);
+        window.inputEditor.focus();
+        return;
+    }
+    
+    // If editors aren't ready and we haven't retried too many times, wait and retry
+    if (retryCount < 3) {
+        console.log('Editors not ready, retrying in 500ms...');
+        setTimeout(() => {
+            setCodeInInputEditor(code, retryCount + 1);
+        }, 500);
+        return;
+    }
+    
+    // Fallback to textarea
+    console.log('CodeMirror input editor not available, using textarea fallback');
+    const inputTextArea = document.getElementById('input-text');
+    if (inputTextArea) {
+        typeWriterEffect(inputTextArea, code, 10);
+    } else {
+        console.error('No input element found');
+    }
 }
 
 function typeWriterEffect(element, text, speed = 10) {
@@ -340,3 +487,143 @@ document.getElementById('input-text').addEventListener('keydown', function(e) {
 });
 
 
+/* =======================
+   1) Load external CSS via JS
+======================= */
+function loadCSS(href) {
+    return new Promise((resolve, reject) => {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      link.onload = resolve;
+      link.onerror = () => reject(new Error('Failed to load ' + href));
+      document.head.appendChild(link);
+    });
+  }
+  
+  async function ensureStyles() {
+    const urls = [
+      // CodeMirror core + theme
+      'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.css',
+    //   'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/theme/material-darker.min.css',
+    //   'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/theme/oceanic-next.min.css',
+      // YOUR stylesheet (make sure the path/filename matches your project)
+      './styles.css'
+    ];
+    for (const u of urls) await loadCSS(u);
+  }
+  
+  /* =======================
+     2) Editors (Python-only)
+  ======================= */
+  let inputEditor, outputEditor;
+  
+  function bootEditors() {
+    const inputTA  = document.getElementById('input-text');
+    const outputTA = document.getElementById('output-text');
+  
+    inputEditor = CodeMirror.fromTextArea(inputTA, {
+      mode: 'python',
+      theme: 'default',
+      lineNumbers: true,
+      styleActiveLine: true,
+      matchBrackets: true,
+      autoCloseBrackets: true,
+      indentUnit: 4,
+      tabSize: 4,
+      indentWithTabs: false,
+      extraKeys: {
+        'Ctrl-Enter': runOptimize,
+        'Cmd-Enter': runOptimize
+      }
+    });
+  
+    outputEditor = CodeMirror.fromTextArea(outputTA, {
+      mode: 'python',
+      theme: 'default',
+      lineNumbers: true,
+      readOnly: true,
+      
+    });
+    
+    // Make editors globally accessible
+    window.inputEditor = inputEditor;
+    window.outputEditor = outputEditor;
+  }
+  
+  // Non-blocking Python check
+  function looksPythonic(src) {
+    const hints = [
+      /^\s*(def|class|import|from|if|for|while|try|except|with)\b/m,
+      /\b(True|False|None)\b/,
+      /^[ \t]*#[^\n]*$/m
+    ];
+    return hints.some(r => r.test(src));
+  }
+  
+  /* =======================
+     3) Optimize flow
+  ======================= */
+  async function runOptimize() {
+    const code = inputEditor.getValue();
+  
+    if (!looksPythonic(code)) {
+      console.warn('Heads up: input doesn’t look like Python. Continuing anyway.');
+    }
+  
+    const btn = document.getElementById('optimizeBtn');
+    btn?.classList.add('optimizing');
+  
+    try {
+      const res = await fetch('http://127.0.0.1:5000/optimize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      });
+  
+      if (!res.ok) throw new Error((await res.text()) || `HTTP ${res.status}`);
+  
+      const data = await res.json(); // expect { optimized_code: '...' } (or similar)
+      const optimized = data.optimized_code ?? data.code ?? '';
+      outputEditor.setValue(optimized);
+      outputEditor.scrollTo(0, 0);
+    } catch (err) {
+      console.error('Optimization failed:', err);
+      // plug into your toast if you have one:
+      // showToast('Optimization failed: ' + err.message, 'error');
+    } finally {
+      btn?.classList.remove('optimizing');
+    }
+  }
+  
+  /* =======================
+     4) Buttons & lifecycle
+  ======================= */
+  function wireButtons() {
+    document.getElementById('pasteBtn')?.addEventListener('click', pasteText);
+    document.getElementById('optimizeBtn')?.addEventListener('click', runOptimize);
+    document.getElementById('clearLeft')?.addEventListener('click', () => inputEditor.setValue(''));
+    document.getElementById('copyRight')?.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(outputEditor.getValue()); }
+      catch (e) { console.error('Copy failed:', e); }
+    });
+  }
+  
+  (async () => {
+    try {
+      await ensureStyles();
+    } catch (e) {
+      console.warn(e.message);
+    }
+  
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        bootEditors();
+        wireButtons();
+      });
+    } else {
+      bootEditors();
+      wireButtons();
+    }
+  })();
+  

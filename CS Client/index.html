@@ -11,6 +11,12 @@
     <!-- Custom Css -->
     <link rel="stylesheet" href="styles.css" type="text/css" />
     
+    <!-- CodeMirror (JS) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/selection/active-line.min.js"></script>
 
     <!-- Ionic icons -->
     <link href="https://unpkg.com/ionicons@4.2.0/dist/css/ionicons.min.css" rel="stylesheet">
@@ -23,6 +29,9 @@
   </head>
 
   <body>
+      <div class="grid-bg">
+        <div class="grid-overlay"></div>
+      </div>
 
   <!-- N A V B A R -->
   <!-- <nav class="navbar navbar-default navbar-expand-lg fixed-top custom-navbar">
@@ -57,98 +66,161 @@
   <!-- E N D  N A V B A R -->
   
   <!-- H E R O -->
-  <!-- <section id="hero">
-        <div class="col-md-7 content-box hero-content">
-          
+<div class="background-grid"></div>
+<section id="hero">
+  
+        <div class="col-md-7 content-box hero-content2">
+           <div class="title-block">
+    <img src = "logo.svg" width="100px" display="flex"><h2>OptiPy</h2>
+  </div>
           <div class="contents">
             <h1 class="static">
-                <b>MAGSULAT NANG <br>
-                    <ul class="text-line">
-                        <li><span>WALANG PANGAMBA</span></li>
-                        <li><span>MALINAW AT WASTO</span></li>
-                        <li><span>MAY BUONG TIWALA</span></li>
-                    </ul>
+                <b>OPTIMIZE YOUR CODE, <br> <span class="hero-title2"> REDUCE YOUR CARBON FOOTPRINT </span>
                 </b>
             </h1>
         </div>
 
             
-          <p>Ang WikAIn ang iyong maaasahang kasangkapan sa pagtukoy ng mga pagkakamali <br> sa gramatika sa Filipino, tumutulong sa iyo na sumulat nang malinaw at may kumpiyansa.</p>
+          <p>OptiPy optimizes your code for performance while calculating and reducing carbon emissions. 
+            <br> Write cleaner, faster, greener code. </p>
           
           <button class="btn btn1">
               <svg height="24" width="24" fill="#FFFFFF" viewBox="0 0 24 24" data-name="Layer 1" id="Layer_1" class="sparkle">
                   <path d="M10,21.236,6.755,14.745.264,11.5,6.755,8.255,10,1.764l3.245,6.491L19.736,11.5l-6.491,3.245ZM18,21l1.5,3L21,21l3-1.5L21,18l-1.5-3L18,18l-3,1.5ZM19.333,4.667,20.5,7l1.167-2.333L24,3.5,21.667,2.333,20.5,0,19.333,2.333,17,3.5Z"></path>
               </svg>
           
-              <a href="#tool"><span class="text1">Get Started</span></a>
+              <a href="#tool"><span class="text1">Start Optimizing</span></a>
           </button>
           <a href="#features" class="btn btn-regular">Learn more</a>
 
       </div>
-  </section> -->
+  </section> 
 
   <!-- E N D  H E R O -->
 
 
-  <!-- T O O L -->
-   
-  <section id="tool">
-<div class="container">
-  <div class="title-block">
-    <img src = "logo.svg" width="100px" display="flex"><h2>OptiPy</h2>
-  </div>
-
-  <div class="squarebox">
-    <div class="sbcontainer">
-      <div class="sbcontainer2">
-        <div class="input">
-          <textarea id="input-text" placeholder="Start by writing, pasting (CTRL + V) your text, or attaching a screenshot of your code.&#10;&#10;To optimize, press (CTRL + Enter)."></textarea>
-          <div class="button-group">
-            <input type="file" id="image-input" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
-            <div class="upload" onclick="document.getElementById('image-input').click()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24" fill="none">
-                <path d="M14.2647 15.9377L12.5473 14.2346C11.758 13.4519 11.3633 13.0605 10.9089 12.9137C10.5092 12.7845 10.079 12.7845 9.67922 12.9137C9.22485 13.0605 8.83017 13.4519 8.04082 14.2346L4.04193 18.2622M14.2647 15.9377L14.606 15.5991C15.412 14.7999 15.8149 14.4003 16.2773 14.2545C16.6839 14.1262 17.1208 14.1312 17.5244 14.2688C17.9832 14.4253 18.3769 14.834 19.1642 15.6515L20 16.5001M14.2647 15.9377L18.22 19.9628M18.22 19.9628C17.8703 20 17.4213 20 16.8 20H7.2C6.07989 20 5.51984 20 5.09202 19.782C4.7157 19.5903 4.40973 19.2843 4.21799 18.908C4.12583 18.7271 4.07264 18.5226 4.04193 18.2622M18.22 19.9628C18.5007 19.9329 18.7175 19.8791 18.908 19.782C19.2843 19.5903 19.5903 19.2843 19.782 18.908C20 18.4802 20 17.9201 20 16.8V13M11 4H7.2C6.07989 4 5.51984 4 5.09202 4.21799C4.7157 4.40973 4.40973 4.71569 4.21799 5.09202C4 5.51984 4 6.0799 4 7.2V16.8C4 17.4466 4 17.9066 4.04193 18.2622M18 9V6M18 6V3M18 6H21M18 6H15" stroke="#4b4b4bc9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>  
-            <button class="paste-btn" onclick="pasteText()">Paste Code</button>
-          </div>
-          <div class="delete-icon" onclick="clearText()"><svg width="22" height="26" viewBox="0 0 27 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path id="Vector" d="M1.83325 8.2288H25.1666M10.5833 14.4576V23.8008M16.4166 14.4576V23.8008M3.29159 8.2288L4.74992 26.9152C4.74992 27.7412 5.05721 28.5334 5.60419 29.1174C6.15117 29.7015 6.89304 30.0296 7.66659 30.0296H19.3333C20.1068 30.0296 20.8487 29.7015 21.3956 29.1174C21.9426 28.5334 22.2499 27.7412 22.2499 26.9152L23.7083 8.2288M9.12492 8.2288V3.5572C9.12492 3.14421 9.27856 2.74812 9.55206 2.45609C9.82555 2.16406 10.1965 2 10.5833 2H16.4166C16.8034 2 17.1743 2.16406 17.4478 2.45609C17.7213 2.74812 17.8749 3.14421 17.8749 3.5572V8.2288" stroke="#3a7f0d" stroke-opacity="0.96" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg></div>
-  
-        </div>
-        
-        
-        <div class="output">
-          <textarea readonly id="output-text" placeholder="Your optimized code will appear here"></textarea>
-          <div class="delete-icon" onclick="copyText()">
-            <svg width="22" height="26" viewBox="0 0 27 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M7.6665 5.02789V23.1952C7.6665 23.9983 7.9738 24.7684 8.52078 25.3363C9.06776 25.9041 9.80962 26.2231 10.5832 26.2231H22.2498C23.0234 26.2231 23.7653 25.9041 24.3122 25.3363C24.8592 24.7684 25.1665 23.9983 25.1665 23.1952V9.9361C25.1665 9.53272 25.0888 9.13342 24.938 8.76165C24.7873 8.38987 24.5665 8.05312 24.2886 7.77116L19.4542 2.86295C18.9093 2.30984 18.1775 2.0001 17.4155 2H10.5832C9.80962 2 9.06776 2.31901 8.52078 2.88685C7.9738 3.45469 7.6665 4.22484 7.6665 5.02789Z" stroke="#3a7f0d" stroke-opacity="0.96" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M19.3333 26.223V29.2509C19.3333 30.0539 19.026 30.8241 18.479 31.3919C17.932 31.9597 17.1901 32.2787 16.4166 32.2787H4.74992C3.97637 32.2787 3.2345 31.9597 2.68752 31.3919C2.14054 30.8241 1.83325 30.0539 1.83325 29.2509V12.5975C1.83325 11.7944 2.14054 11.0243 2.68752 10.4564C3.2345 9.88859 3.97637 9.56958 4.74992 9.56958H7.66659" stroke="#3a7f0d" stroke-opacity="0.96" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-          </div>
-        </div>
-      </div>
-      
-
-      <button class="btn btn2"  id="optimize-btn" onclick="optimize()">
-        <svg height="24" width="24" fill="#FFFFFF" viewBox="0 0 24 24" data-name="Layer 1" id="Layer_1" class="sparkle">
-            <path d="M10,21.236,6.755,14.745.264,11.5,6.755,8.255,10,1.764l3.245,6.491L19.736,11.5l-6.491,3.245ZM18,21l1.5,3L21,21l3-1.5L21,18l-1.5-3L18,18l-3,1.5ZM19.333,4.667,20.5,7l1.167-2.333L24,3.5,21.667,2.333,20.5,0,19.333,2.333,17,3.5Z"></path>
-        </svg>
-        <span class="text1">Optimize</span>
-      </button>
-  
+ <!-- T O O L -->
+<section id="tool">
+  <div class="container">
+    <div class="title-block">
+      <h2 class="try">Code Optimizer</h2>
+      <br> Input your code, press optimize, and see the magic happen!
     </div>
-  
-</div>
+
+    <div class="adjustments">
+      
+      <div class="input-box">
+      <div class="inputGroup">
+        <input type="text" required="" autocomplete="off">
+        <label for="name">No. of Inputs</label>
+      </div>
+      <div class="inputGroup" id="runsPY">
+        <input type="text" required="" autocomplete="off">
+        <label for="name">No. of Approx runs/yr</label>
+      </div>
+    </div>
+
+      <div class="toggle">
+      <label class="switch">
+        <input type="checkbox">
+        <span class="slider"></span>
+      </label> <span class="switch-text">Keep Comments</span>
+
+      <label class="switch">
+        <input type="checkbox">
+        <span class="slider"></span>
+      </label> <span class="switch-text">Keep F-strings</span>
+      
+    </div>
+
+
+
+    </div>
+
+    <div class="squarebox">
+      <div class="sbcontainer">
+        <div class="sbcontainer2">
+          <!-- Left: Input (Python) -->
+
+          <div class="input">
+            <div class="codetext">
+              <span class="input-title">Your Code</span>
+              <br>  <span class="input-desc">Start by writing, pasting (CTRL + V) your code, or attaching a screenshot of your code.</span>            
+            </div>
+            <textarea
+              id="input-text"
+              placeholder="Start by writing, pasting (CTRL + V) your code, or attaching a screenshot of your code.&#10;&#10;To optimize, press (CTRL + Enter)."></textarea>
+
+            <div class="button-group">
+              
+              <button id="pasteBtn" class="paste-btn" type="button">Paste Code</button>
+              <textarea id="paste-capture" aria-hidden="true"
+  style="position:fixed;left:-9999px;top:0;opacity:0;width:1px;height:1px;"></textarea>
+            </div>
+
+            <!-- Added id so JS can bind; kept your onclick so legacy still works -->
+            <div id="clearLeft" class="delete-icon" onclick="clearText()">
+              <svg width="22" height="26" viewBox="0 0 27 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path id="Vector" d="M1.83325 8.2288H25.1666M10.5833 14.4576V23.8008M16.4166 14.4576V23.8008M3.29159 8.2288L4.74992 26.9152C4.74992 27.7412 5.05721 28.5334 5.60419 29.1174C6.15117 29.7015 6.89304 30.0296 7.66659 30.0296H19.3333C20.1068 30.0296 20.8487 29.7015 21.3956 29.1174C21.9426 28.5334 22.2499 27.7412 22.2499 26.9152L23.7083 8.2288M9.12492 8.2288V3.5572C9.12492 3.14421 9.27856 2.74812 9.55206 2.45609C9.82555 2.16406 10.1965 2 10.5833 2H16.4166C16.8034 2 17.1743 2.16406 17.4478 2.45609C17.7213 2.74812 17.8749 3.14421 17.8749 3.5572" stroke="#3a7f0d" stroke-opacity="0.96" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Right: Output (read-only Python) -->
+          <div class="output">
+            <div class="codetext">
+              <span class="input-title">Optimized Code</span>
+              <br>  <span class="input-desc">Your optimized code will appear here. <br> <br></span>            
+            </div>
+            <textarea readonly id="output-text" placeholder="Your optimized code will appear here"></textarea>
+
+            <!-- Added id so JS can bind; kept your onclick so legacy still works -->
+            <div id="copyRight" class="delete-icon" onclick="copyText()">
+              <svg width="22" height="26" viewBox="0 0 27 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.6665 5.02789V23.1952C7.6665 23.9983 7.9738 24.7684 8.52078 25.3363C9.06776 25.9041 9.80962 26.2231 10.5832 26.2231H22.2498C23.0234 26.2231 23.7653 25.9041 24.3122 25.3363C24.8592 24.7684 25.1665 23.9983 25.1665 23.1952V9.9361C25.1665 9.53272 25.0888 9.13342 24.938 8.76165C24.7873 8.38987 24.5665 8.05312 24.2886 7.77116L19.4542 2.86295C18.9093 2.30984 18.1775 2.0001 17.4155 2H10.5832C9.80962 2 9.06776 2.31901 8.52078 2.88685C7.9738 3.45469 7.6665 4.22484 7.6665 5.02789Z" stroke="#3a7f0d" stroke-opacity="0.96" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M19.3333 26.223V29.2509C19.3333 30.0539 19.026 30.8241 18.479 31.3919C17.932 31.9597 17.1901 32.2787 16.4166 32.2787H4.74992C3.97637 32.2787 3.2345 31.9597 2.68752 31.3919C2.14054 30.8241 1.83325 30.0539 1.83325 29.2509V12.5975C1.83325 11.7944 2.14054 11.0243 2.68752 10.4564C3.2345 9.88859 3.97637 9.56958 4.74992 9.56958H7.66659" stroke="#3a7f0d" stroke-opacity="0.96" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Optimize button -->
+        <!-- Use id="optimizeBtn" so the JS editor wiring can bind; removed inline onclick to avoid double handlers -->
+        <div class="tool-action">
+
+        
+        <input
+                type="file"
+                id="image-input"
+                accept="image/*"
+                style="display: none;"
+                onchange="handleImageUpload(event)">
+              <div class="upload" onclick="document.getElementById('image-input').click()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 24 24" fill="none">
+                  <path d="M14.2647 15.9377L12.5473 14.2346C11.758 13.4519 11.3633 13.0605 10.9089 12.9137C10.5092 12.7845 10.079 12.7845 9.67922 12.9137C9.22485 13.0605 8.83017 13.4519 8.04082 14.2346L4.04193 18.2622M14.2647 15.9377L14.606 15.5991C15.412 14.7999 15.8149 14.4003 16.2773 14.2545C16.6839 14.1262 17.1208 14.1312 17.5244 14.2688C17.9832 14.4253 18.3769 14.834 19.1642 15.6515L20 16.5001M14.2647 15.9377L18.22 19.9628M18.22 19.9628C17.8703 20 17.4213 20 16.8 20H7.2C6.07989 20 5.51984 20 5.09202 19.782C4.7157 19.5903 4.40973 19.2843 4.21799 18.908C4.12583 18.7271 4.07264 18.5226 4.04193 18.2622M18.22 19.9628C18.5007 19.9329 18.7175 19.8791 18.908 19.782C19.2843 19.5903 19.5903 19.2843 19.782 18.908C20 18.4802 20 17.9201 20 16.8V13M11 4H7.2C6.07989 4 5.51984 4 5.09202 4.21799C4.7157 4.40973 4.40973 4.71569 4.21799 5.09202C4 5.51984 4 6.0799 4 7.2V16.8C4 17.4466 4 17.9066 4.04193 18.2622M18 9V6M18 6V3M18 6H21M18 6H15" stroke="#4b4b4bc9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+        <button class="btn btn2" id="optimizeBtn" onclick="optimize()">
+          <svg height="24" width="24" fill="#FFFFFF" viewBox="0 0 24 24" data-name="Layer 1" id="Layer_1" class="sparkle">
+            <path d="M10,21.236,6.755,14.745.264,11.5,6.755,8.255,10,1.764l3.245,6.491L19.736,11.5l-6.491,3.245ZM18,21l1.5,3L21,21l3-1.5L21,18l-1.5-3L18,18l-3,1.5ZM19.333,4.667,20.5,7l1.167-2.333L24,3.5,21.667,2.333,20.5,0,19.333,2.333,17,3.5Z"></path>
+          </svg>
+          <span class="text1">Optimize</span>
+        </button>
+      </div>
+
+      </div>
+    </div>
+  </div>
 </section>
+<!-- E N D  T O O L -->
 
-  <!-- E N D  T O O L  -->
 
+
+  <!-- CHANGES-->
   <div class="container">
     <div class="revcontainer">
       <span class="rtitle"> 
-        Changes
+        What we changed:
        </span><br>
       <div class="revisions">
         
@@ -162,8 +234,13 @@
     </div>
   </div>
 </div>
+<!-- END CHANGES -->
 
-  <!-- P R I C I N G -->
+
+
+
+
+  <!-- IMPROVEMENT METRICS -->
   <section id="features">
     <div class="title-block">
       <span class="improv"><h2>Improvement Metrics</h2></span>
@@ -171,49 +248,46 @@
     </div>
 
     <div class="container">
-
-
-      
       <div class="row">
         <div class="col-md-4">
-          <div class="features-box">
+          <div class="features-box" id="og-code">
             <!-- <h3 class="demo">#1</h3> -->
             <h6>Original Code</h6>
             <!-- <p>Binibigyang-linaw ang pagkakabuo ng bawat pangungusap</p> -->
-            <div class="divider-light" id="og-code"></div>
+            <div class="divider-light"></div>
             <ul id="original-metrics">
-              <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EMISSION:</b></li>
-              <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>ENERGY:</b></li>
-              <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EXECUTION TIME:</b></li>
+              <li><i class="ion ion-ios-leaf"></i><b>EMISSION:</b></li>
+              <li><i class="ion ion-ios-flash"></i><b>ENERGY:</b></li>
+              <li><i class="ion ion-md-time"></i><b>EXECUTION TIME:</b></li>
             </ul>
 
           </div>
         </div>
         <div class="col-md-4">
-          <div class="features-box">
+          <div class="features-box"  id="optimized-code">
             <!-- <h3>#2</h3> -->
             <h6>Optimized Code</h6>
             <!-- <p>Pag-aayos ng estruktura ng pangungusap</p> -->
-            <div class="divider-light" id="optimized-code"></div>
+            <div class="divider-light"></div>
             <ul id="optimized-metrics">
-              <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EMISSION:</b></li>
-              <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>ENERGY:</b></li>
-              <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EXECUTION TIME:</b></li>
+              <li><i class="ion ion-ios-leaf"></i><b>EMISSION:</b></li>
+              <li><i class="ion ion-ios-flash"></i><b>ENERGY:</b></li>
+              <li><i class="ion ion-md-time"></i><b>EXECUTION TIME:</b></li>
             </ul>
 
 
           </div>
         </div>
         <div class="col-md-4">
-          <div class="features-box">
+          <div class="features-box" id="code-results">
             <!-- <h3>#3</h3> -->
             <h6>Results</h6>
             <!-- <p>Agarang puna sa pagsusulat</p> -->
             <div class="divider-light" id="results"></div>
             <ul id="results-metrics">
-              <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EMISSION REDUCTION:</b></li>
-              <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>ENERGY REDUCTION:</b></li>
-              <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>TIME REDUCTION:</b></li>
+              <li><i class="ion ion-ios-leaf"></i><b>EMISSION REDUCTION:</b></li>
+              <li><i class="ion ion-ios-flash"></i><b>ENERGY REDUCTION:</b></li>
+              <li><i class="ion ion-md-time"></i><b>TIME REDUCTION:</b></li>
             </ul>
 
 
@@ -222,16 +296,97 @@
       </div>
     </div>
   </section>
-  <!-- E N D  P R I C I N G -->
+  <!-- END IMPROVEMENT METRICS-->
+
+
+
+
+  <!-- ENVIRONMENTAL IMPACT -->
+<section id="impact">
+  <div class="container">
+    <div class="impact-header">
+      <h2>Environmental Impact</h2>
+      <p>This shows the real-life impact of your code.</p>
+    </div>
+
+
+    <div class="impact-grid">
+      <div class="impact-card">
+        <div class="icon-badge badge-green"><i class="ion ion-ios-leaf"></i></div>
+        <div class="metric-value" id="impact-co2">0.00kg</div>
+        <div class="metric-label">CO₂ Emissions Reduced</div>
+      </div>
+
+      <div class="impact-card">
+        <div class="icon-badge badge-yellow"><i class="ion ion-ios-flash"></i></div>
+        <div class="metric-value" id="impact-energy">0.00kWh</div>
+        <div class="metric-label">Energy Saved</div>
+      </div>
+
+      <div class="impact-card">
+        <div class="icon-badge badge-green"><i class="mdi mdi-pine-tree"></i></div>
+        <div class="metric-value" id="impact-trees">0.00</div>
+        <div class="metric-label">Trees Absorbing CO₂</div>
+      </div>
+
+      <div class="impact-card">
+        <div class="icon-badge badge-blue"><i class="ion ion-ios-water"></i></div>
+        <div class="metric-value" id="impact-distance">0.00m</div>
+        <div class="metric-label">Driving Distance</div>
+      </div>
+
+      <div class="impact-list-card">
+        <div class="list-title">
+          <i class="ion ion-ios-flash"></i> Energy Usage Equivalent
+        </div>
+        <ul class="bullet-list" id="energy-equivalent">
+          <li>Powers a 60W light bulb for 0.7 hours</li>
+          <li>Charges a smartphone 4,385 times</li>
+          <li>Runs a laptop for 0.9 hours</li>
+        </ul>
+      </div>
+
+      <div class="impact-list-card">
+        <div class="list-title">
+          <i class="ion ion-ios-leaf"></i> Carbon Footprint Equivalent
+        </div>
+        <ul class="bullet-list" id="carbon-equivalent">
+          <li>Same as sending 5 emails</li>
+          <li>Equal to 0.95 trees absorbing CO₂ for a day</li>
+          <li>Moderate environmental impact</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- END ENVIRONMENTAL IMPACT-->
+
+
+<!-- WHAT THIS MEANS-->
+  <section id="impact">
+    <div class="container">
+      <div class="impact-header">
+        <h2>What does this mean?</h2>
+        <p>explanation</p>
+      </div>
+</div>
+</section>
+
+    <!--  END WHAT THIS MEANS-->
+
 
 
   <!--  F O O T E R  -->
   <footer id="footer">
     <div class="container">
-      OptiPy: Code Refactorization and Emissions Tracking
+      <b > Read the Manuscript here: </b><br>
+      <a href ="_blank" class="footer-text"> <u>
+        OptiPy: Code Refactorization and Emissions Tracking
+      </u></a>
       <div class="divider"></div>
       <div class="row">
-        <div class="col-md-4 col-xs-12">
+        <div class="col-md-4 col-xs-12" >
           <strong>Researchers: </strong><br>
           Boaquin, Mark Lawrence <br>
           Cillado, Aero Micro <br>
@@ -274,7 +429,7 @@
       }
     </script>
 
-    <div id="metrics-toast" style="display:none; position:fixed; left:50%; bottom:30px; transform:translateX(-50%); background:#222; color:#fff; padding:8px 18px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.2); font-size:14px; cursor:pointer; z-index:9999;">
+    <div id="metrics-toast" style="display:none; position:fixed; left:50%; bottom:30px; transform:translateX(-50%); padding: 10px; background:#222; color:#fff; padding:8px 18px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.2); font-size:14px; cursor:pointer; z-index:9999;">
         Code optimized! <u>Click here to see metrics</u>
     </div>
   </body>
