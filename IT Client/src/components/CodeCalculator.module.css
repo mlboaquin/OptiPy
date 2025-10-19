@@ -9,18 +9,19 @@ body {
 .container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 1rem;
-  background-color: #f9f9f9;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
   font-family: Poppins;
-  max-width: 1280px;
+  max-width: 1400px;
   width: 100%;
   margin-left: auto;
   margin-right: auto;
   box-sizing: border-box;
   align-items: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 .titleBlock {
@@ -43,18 +44,20 @@ body {
 
 .squarebox {
   width: 100%;
-  max-width: 1240px;
-  min-height: 530px;
+  max-width: 1300px;
+  min-height: 580px;
   border: 1px solid #006d003f;  
   flex-shrink: 0;
-  border-radius: 15px;
-  background: rgba(156, 156, 156, 0.074);
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.5em;
+  padding: 2rem;
   justify-content: flex-start;
   box-sizing: border-box;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .sbcontainer {
@@ -77,22 +80,29 @@ body {
   flex: 1 1 600px;
   width: auto;
   max-width: none;
-  height: 400px;
+  height: 450px;
   position: relative;
   border-radius: 15px;
   border: 1px solid #afafafcc;
-  background: rgba(255, 255, 255, 0.76);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
   margin-bottom: 30px;
   box-sizing: border-box;
   order: 1;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.input:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
 }
 
 .output {
   flex: 1 1 600px;
   width: auto;
   max-width: none;
-  height: 400px;
+  height: 450px;
   position: relative;
   border-radius: 15px;
   border: 1px solid #bfbfbfbf;
@@ -100,13 +110,20 @@ body {
   backdrop-filter: blur(10px);
   box-sizing: border-box;
   order: 2;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.output:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
 }
 
 .textarea {
   width: calc(100% - 60px);
   height: calc(100% - 20px);
   margin: 10px;
-  padding: 10px;
+  padding: 15px;
   border-radius: 15px;
   border: none;
   outline: none;
@@ -116,9 +133,37 @@ body {
   background: transparent;
   box-sizing: border-box;
   overflow-y: auto;
-  font-family: 'Courier New', monospace;
+  font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
   line-height: 1.6;
   white-space: pre-wrap;
+  tab-size: 2;
+  -moz-tab-size: 2;
+  -webkit-tab-size: 2;
+  /* Enhanced code editor styling */
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.textarea::selection {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+/* Syntax highlighting for Python keywords */
+.textarea {
+  /* This will be enhanced with a proper syntax highlighter in the future */
+  background-image: 
+    linear-gradient(transparent 50%, rgba(0, 0, 0, 0.03) 50%);
+  background-size: 100% 2em;
+  background-attachment: local;
 }
 
 .textarea::placeholder {
@@ -190,14 +235,14 @@ body {
 
 .btn2 {
   border: none;
-  width: 11em;
-  height: 3em;
+  width: 12em;
+  height: 3.5em;
   border-radius: 3em;
-  background: linear-gradient(0deg, #307700, #7fa60a);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   cursor: pointer;
-  transition: all 250ms ease-in-out;
-  padding: 10px;
-  margin-top: 25px;
+  transition: all 300ms ease-in-out;
+  padding: 12px 24px;
+  margin-top: 30px;
   text-align: center; 
   line-height: 1em; 
   white-space: nowrap; 
@@ -206,39 +251,43 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
   font-family: Poppins;
   color: white;
+  font-weight: 600;
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .btn2:hover {
-  background: linear-gradient(0deg, #0e8900, #007506);
-  box-shadow: inset 0px 1px 0px 0px rgba(255, 255, 255, 0.4),
-              inset 0px -4px 0px 0px rgba(0, 0, 0, 0.2),
-              0px 0px 0px 4px rgba(255, 255, 255, 0.2),
-              0px 0px 180px 0px #129d00;
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4),
+              0 0 0 4px rgba(16, 185, 129, 0.1);
+  transform: translateY(-3px) scale(1.02);
 }
 
 .btn2:hover .text1 {
   color: rgb(255, 255, 255);
+  transform: scale(1.05);
 }
 
 .btn2:hover .sparkle {
   fill: white;
-  transform: scale(1.2);
+  transform: scale(1.3) rotate(10deg);
 }
 
 .text1 {
   font-weight: 600;
-  color: #ffffffc2;
-  font-size: medium;
+  color: #ffffff;
+  font-size: 16px;
   margin-right: 10px;
+  transition: all 0.3s ease;
 }
 
 .sparkle {
   display: inline-block;
   vertical-align: middle;
+  transition: all 0.3s ease;
 }
 
 /* Enhanced styling for formatted metrics output */
@@ -246,15 +295,194 @@ body {
   font-size: 13px;
   line-height: 1.8;
   color: #2c3e50;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 248, 255, 0.8));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 248, 255, 0.9));
   border: 1px solid rgba(52, 152, 219, 0.2);
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
 }
 
 .output .textarea:focus {
   outline: none;
   border-color: rgba(52, 152, 219, 0.5);
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Code editor enhancements */
+.textarea::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.textarea::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.textarea::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+.textarea::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Line numbers effect */
+.textarea {
+  background-image: 
+    linear-gradient(transparent 50%, rgba(0, 0, 0, 0.02) 50%);
+  background-size: 100% 2em;
+  background-attachment: local;
+  background-position: 0 0;
+  padding-left: 3.5em;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+}
+
+/* Auto-indentation visual feedback */
+.textarea:focus {
+  background-image: 
+    linear-gradient(transparent 50%, rgba(59, 130, 246, 0.05) 50%),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, transparent 0%);
+  background-size: 100% 2em, 2em 100%;
+  background-attachment: local, local;
+}
+
+/* Analysis Cards Styling */
+.analysisCard {
+  background: white;
+  border: 1px solid #e1e8ed;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.analysisCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-color: #3498db;
+}
+
+.analysisCard h3 {
+  margin: 0 0 1rem 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  font-family: Poppins;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.metricRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.metricRow:last-child {
+  margin-bottom: 0;
+}
+
+.metricLabel {
+  font-weight: 500;
+  color: #34495e;
+  font-family: Poppins;
+}
+
+.metricValue {
+  font-weight: 600;
+  color: #e74c3c;
+  font-family: Poppins;
+}
+
+.ecoScoreDisplay {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.ecoScoreNumber {
+  font-size: 48px;
+  font-weight: 700;
+  font-family: Poppins;
+}
+
+.ecoScoreLabel {
+  font-size: 14px;
+  color: #7f8c8d;
+  font-family: Poppins;
+}
+
+.impactItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.impactItem:last-child {
+  margin-bottom: 0;
+}
+
+.impactIcon {
+  font-size: 16px;
+}
+
+.impactText {
+  font-size: 14px;
+  color: #34495e;
+  font-family: Poppins;
+}
+
+.suggestionItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  font-size: 14px;
+  color: #34495e;
+  font-family: Poppins;
+}
+
+.suggestionItem:last-child {
+  margin-bottom: 0;
+}
+
+.suggestionNumber {
+  font-weight: 600;
+  color: #3498db;
+}
+
+.warningItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  font-size: 14px;
+  color: #dc2626;
+  font-family: Poppins;
+}
+
+.warningItem:last-child {
+  margin-bottom: 0;
+}
+
+.warningIcon {
+  font-weight: 600;
 }
 
 /* Responsive design */
@@ -267,11 +495,27 @@ body {
     width: 100%;
     max-width: 100%;
     flex: 1 1 auto;
-    height: 320px;
+    height: 350px;
   }
   
   .titleBlock h2 {
     font-size: 32px;
+  }
+  
+  .container {
+    padding: 1rem;
+  }
+  
+  .squarebox {
+    padding: 1.5rem;
+  }
+  
+  .analysisCard {
+    padding: 1rem;
+  }
+  
+  .ecoScoreNumber {
+    font-size: 36px;
   }
 }
 
@@ -281,10 +525,31 @@ body {
   }
   
   .squarebox {
-    padding: 1em;
+    padding: 1rem;
   }
   
   .input, .output {
-    height: 280px;
+    height: 300px;
+  }
+  
+  .btn2 {
+    width: 100%;
+    margin-right: 0;
+  }
+  
+  .container {
+    padding: 0.5rem;
+  }
+  
+  .analysisCard {
+    padding: 0.75rem;
+  }
+  
+  .analysisCard h3 {
+    font-size: 16px;
+  }
+  
+  .ecoScoreNumber {
+    font-size: 32px;
   }
 }
