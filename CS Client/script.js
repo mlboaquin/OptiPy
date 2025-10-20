@@ -1,3 +1,61 @@
+var startScreen = document.querySelector("#start-screen"),
+    leaf = document.querySelector(".start-leaf"),
+    leafTrace = document.querySelector("#leaf-trace"),
+    leafLeftTrace = document.querySelector('#leaf-trace__left'),
+    leafRightTrace = document.querySelector('#leaf-trace__right'),
+    topPanel = document.querySelector(".start-screen__top"),
+    bottomPanel = document.querySelector(".start-screen__bottom"),
+    renderTrace = function(path) {
+    /**
+     *  @see http://jakearchibald.com/2013/animated-line-drawing-svg/
+     */
+
+        var length = path.getTotalLength();
+        // Clear any previous transition
+        path.style.transition = path.style.WebkitTransition =
+        'none';
+        // Set up the starting positions
+        path.style.strokeDasharray = length + ' ' + length;
+        path.style.strokeDashoffset = length;
+        // Trigger a layout so styles are calculated & the browser
+        // picks up the starting position before animating
+        path.getBoundingClientRect();
+        // Define our transition
+        path.style.transition = path.style.WebkitTransition =
+        'stroke-dashoffset 1.5s ease-in-out';
+        // Go!
+        path.style.strokeDashoffset = '0';
+    };
+
+renderTrace(leafLeftTrace);
+renderTrace(leafRightTrace);
+
+// TODO: clean up nesting
+setTimeout(function(){
+    leafTrace.classList.add("hide");
+    leaf.classList.add("show");
+    setTimeout(function() {
+        leaf.classList.add("scaleDown");
+        setTimeout(function() {
+            // may possibly need to make panels look seamless
+            // document.querySelector("#start-screen").style.background = "none";
+            topPanel.classList.add("slideUp");
+            bottomPanel.classList.add("slideDown");
+            setTimeout(function() {
+                // destroy start screen and clear references
+                startScreen.parentNode.removeChild(startScreen);
+                startScreen = null;
+                leaf = null;
+                leafTrace = null;
+                leafLeftTrace = null;
+                leafRightTrace = null;
+                topPanel = null;
+                bottomPanel = null;
+            }, 500);
+        }, 600);
+    }, 500);
+}, 1500);
+
 
 function copyText() {
 
@@ -166,7 +224,7 @@ function hideButtonsOnInput() {
 }
   
   
-hidePasteButtonOnPaste();
+
 hideButtonsOnInput();
 async function optimize() {
     const inputText = inputEditor.getValue(); // Get text from CodeMirror input editor
@@ -304,23 +362,23 @@ function updateMetrics(metrics) {
 
         // Update Original Code metrics
         originalBox.innerHTML = `
-            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EMISSION:</b><br> ${toScientificWithSuperscript(metrics.original.emissions)} kg CO2eq </li>
-            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>ENERGY:</b><br> ${toScientificWithSuperscript(metrics.original.energy)} kWh</li>
-            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EXECUTION TIME:</b><br> ${metrics.original.execution_time} s</li>
+            <li><i class="ion ion-ios-leaf"></i><b>EMISSION:</b><br> ${toScientificWithSuperscript(metrics.original.emissions)} kg CO2eq </li>
+            <li><i class="ion ion-ios-flash"></i><b>ENERGY:</b><br> ${toScientificWithSuperscript(metrics.original.energy)} kWh</li>
+            <li><i class="ion ion-md-time"></i><b>EXECUTION TIME:</b><br> ${metrics.original.execution_time} s</li>
         `;
 
         // Update Optimized Code metrics
         optimizedBox.innerHTML = `
-            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EMISSION:</b><br> ${toScientificWithSuperscript(metrics.optimized.emissions)} kg CO2eq</li>
-            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>ENERGY:</b><br> ${toScientificWithSuperscript(metrics.optimized.energy)} kWh</li>
-            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EXECUTION TIME:</b><br> ${metrics.optimized.execution_time} s</li>
+            <li><i class="ion ion-ios-leaf"></i><b>EMISSION:</b><br> ${toScientificWithSuperscript(metrics.optimized.emissions)} kg CO2eq</li>
+            <li><i class="ion ion-ios-flash"></i><b>ENERGY:</b><br> ${toScientificWithSuperscript(metrics.optimized.energy)} kWh</li>
+            <li><i class="ion ion-md-time"></i><b>EXECUTION TIME:</b><br> ${metrics.optimized.execution_time} s</li>
         `;
 
         // Update Results metrics with color-coded arrows
         resultsBox.innerHTML = `
-            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>EMISSION REDUCTION:</b><br> ${getResultHTML(emissionsReduction, 'kg CO2eq')}</li>
-            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>ENERGY REDUCTION:</b><br> ${getResultHTML(energyReduction, 'kWh')}</li>
-            <li><i class="icon ion-md-checkmark-circle-outline demo"></i><b>TIME REDUCTION:</b><br> ${getResultHTML(timeReduction, 's')}</li>
+            <li><i class="ion ion-ios-leaf"></i><b>EMISSION REDUCTION:</b><br> ${getResultHTML(emissionsReduction, 'kg CO2eq')}</li>
+            <li><i class="ion ion-ios-flash"></i><b>ENERGY REDUCTION:</b><br> ${getResultHTML(energyReduction, 'kWh')}</li>
+            <li><i class="ion ion-md-time"></i><b>TIME REDUCTION:</b><br> ${getResultHTML(timeReduction, 's')}</li>
         `;
     }
 
@@ -486,6 +544,34 @@ document.getElementById('input-text').addEventListener('keydown', function(e) {
     }
 });
 
+function setupHidePasteOnEdit() {
+    const pasteBtn = document.getElementById('pasteBtn') || document.querySelector('.paste-btn');
+  
+    if (!window.inputEditor || !pasteBtn) return;
+  
+    const updateVisibility = () => {
+      const content = inputEditor.getValue().trim();
+      pasteBtn.style.display = content.length === 0 ? 'inline-block' : 'none';
+    };
+  
+    // Update on any change triggered by the user
+    inputEditor.on('change', (cm, change) => {
+      // Ignore programmatic changes (like .setValue on load)
+      if (change?.origin !== 'setValue') {
+        updateVisibility();
+      }
+    });
+  
+    // Also monitor paste and typing directly
+    inputEditor.on('paste', updateVisibility);
+    inputEditor.on('keydown', updateVisibility);
+    inputEditor.on('inputRead', updateVisibility);
+  
+    // Run once on startup to ensure correct state
+    updateVisibility();
+  }
+  
+
 
 /* =======================
    1) Load external CSS via JS
@@ -549,8 +635,13 @@ function loadCSS(href) {
     // Make editors globally accessible
     window.inputEditor = inputEditor;
     window.outputEditor = outputEditor;
+
+    setupHidePasteOnEdit();  
   }
   
+ 
+  
+
   // Non-blocking Python check
   function looksPythonic(src) {
     const hints = [
@@ -566,13 +657,9 @@ function loadCSS(href) {
   ======================= */
   async function runOptimize() {
     const code = inputEditor.getValue();
+    const btn  = document.getElementById('optimizeBtn');
   
-    if (!looksPythonic(code)) {
-      console.warn('Heads up: input doesn’t look like Python. Continuing anyway.');
-    }
-  
-    const btn = document.getElementById('optimizeBtn');
-    btn?.classList.add('optimizing');
+    btn.classList.add('optimizing');
   
     try {
       const res = await fetch('http://127.0.0.1:5000/optimize', {
@@ -580,21 +667,19 @@ function loadCSS(href) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code })
       });
+      if (!res.ok) throw new Error(await res.text() || `HTTP ${res.status}`);
   
-      if (!res.ok) throw new Error((await res.text()) || `HTTP ${res.status}`);
-  
-      const data = await res.json(); // expect { optimized_code: '...' } (or similar)
+      const data = await res.json();
       const optimized = data.optimized_code ?? data.code ?? '';
       outputEditor.setValue(optimized);
       outputEditor.scrollTo(0, 0);
     } catch (err) {
       console.error('Optimization failed:', err);
-      // plug into your toast if you have one:
-      // showToast('Optimization failed: ' + err.message, 'error');
     } finally {
-      btn?.classList.remove('optimizing');
+      btn.classList.remove('optimizing'); // SVG + "Optimize" come back
     }
   }
+  
   
   /* =======================
      4) Buttons & lifecycle
