@@ -5,7 +5,7 @@ import os
 class CodeExtractor:
     def __init__(self):
         # Set Tesseract path explicitly
-        tesseract_path = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+        tesseract_path = r'C:\Users\Mark\AppData\Local\Programs\Tesseract-OCR\tesseract.exe'
         if os.path.exists(tesseract_path):
             pytesseract.pytesseract.tesseract_cmd = tesseract_path
         else:

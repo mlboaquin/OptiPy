@@ -187,7 +187,7 @@ function handleKeyDown(event) {
     // Only prevent default and submit on Ctrl+Enter (or Cmd+Enter)
     if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
         event.preventDefault();
-        optimize();
+        runOptimize();
     }
     // For plain Enter, do nothing—let the browser insert a new line
 }
@@ -226,75 +226,6 @@ function hideButtonsOnInput() {
   
 
 hideButtonsOnInput();
-async function optimize() {
-    const inputText = inputEditor.getValue(); // Get text from CodeMirror input editor
-    const outputText = document.getElementById('output-text');
-    const optimizeButton = document.getElementById('optimize-btn');
-
-    // No confirmation dialog here
-
-    // Show loading message with shimmer
-    outputEditor.setValue('Please wait while your code is being generated...'); // Set text in CodeMirror output editor
-    outputText.classList.add('shimmer');
-    if (optimizeButton) {
-        optimizeButton.disabled = true;
-        optimizeButton.classList.add('shimmer');
-    }
-
-    try {
-        const response = await fetch('http://127.0.0.1:5000/optimize', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code: inputText })
-        });
-
-        const text = await response.text();
-        console.log("Raw response:", text);
-        let data;
-        try {
-            data = JSON.parse(text);
-        } catch (e) {
-            outputText.classList.remove('shimmer');
-            outputEditor.setValue('Server returned invalid JSON.'); // Set text in CodeMirror output editor
-            return;
-        }
-
-        if (response.ok) {
-            outputText.classList.remove('shimmer');
-            if (data.optimized_code) {
-                outputEditor.setValue(data.optimized_code); // Set text in CodeMirror output editor
-            } else if (data.error) {
-                // Show error and details if available
-                let errorMsg = `Error: ${data.error}`;
-                if (data.details) {
-                    errorMsg += "\n\nDetails:\n" + data.details.join('\n');
-                }
-                outputEditor.setValue(errorMsg); // Set text in CodeMirror output editor
-            } else {
-                outputEditor.setValue('No optimized code returned.'); // Set text in CodeMirror output editor
-            }
-
-            if (data.changes) updateChanges(data.changes);
-            if (data.metrics) updateMetrics(data.metrics);
-        } else {
-            outputText.classList.remove('shimmer');
-            let errorMsg = `Error: ${data.error || 'Unknown error'}`;
-            if (data.details) {
-                errorMsg += "\n\nDetails:\n" + data.details.join('\n');
-            }
-            outputEditor.setValue(errorMsg); // Set text in CodeMirror output editor
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        outputText.classList.remove('shimmer');
-        outputEditor.setValue('Error connecting to the server. Please try again.'); // Set text in CodeMirror output editor
-    } finally {
-        if (optimizeButton) {
-            optimizeButton.disabled = false;
-            optimizeButton.classList.remove('shimmer');
-        }
-    }
-}
 
 
 function updateChanges(changes) {
@@ -353,25 +284,26 @@ function updateMetrics(metrics) {
     const originalBox = document.getElementById('original-metrics');
     const optimizedBox = document.getElementById('optimized-metrics');
     const resultsBox = document.getElementById('results-metrics');
+    const complexityBox = document.getElementById('complexity-metrics');
 
     if (metrics && metrics.original && metrics.optimized) {
-        // Compute reductions
-        const emissionsReduction = metrics.original.emissions - metrics.optimized.emissions;
-        const energyReduction = metrics.original.energy - metrics.optimized.energy;
-        const timeReduction = metrics.original.execution_time - metrics.optimized.execution_time;
+        // Use improvements from the response if available, otherwise compute them
+        const emissionsReduction = metrics.improvements?.emissions_reduction || (metrics.original.emissions - metrics.optimized.emissions);
+        const energyReduction = metrics.improvements?.energy_reduction || (metrics.original.energy - metrics.optimized.energy);
+        const timeReduction = metrics.improvements?.time_reduction || (metrics.original.execution_time - metrics.optimized.execution_time);
 
         // Update Original Code metrics
         originalBox.innerHTML = `
             <li><i class="ion ion-ios-leaf"></i><b>EMISSION:</b><br> ${toScientificWithSuperscript(metrics.original.emissions)} kg CO2eq </li>
             <li><i class="ion ion-ios-flash"></i><b>ENERGY:</b><br> ${toScientificWithSuperscript(metrics.original.energy)} kWh</li>
-            <li><i class="ion ion-md-time"></i><b>EXECUTION TIME:</b><br> ${metrics.original.execution_time} s</li>
+            <li><i class="ion ion-md-time"></i><b>EXECUTION TIME:</b><br> ${metrics.original.execution_time.toFixed(6)} s</li>
         `;
 
         // Update Optimized Code metrics
         optimizedBox.innerHTML = `
             <li><i class="ion ion-ios-leaf"></i><b>EMISSION:</b><br> ${toScientificWithSuperscript(metrics.optimized.emissions)} kg CO2eq</li>
             <li><i class="ion ion-ios-flash"></i><b>ENERGY:</b><br> ${toScientificWithSuperscript(metrics.optimized.energy)} kWh</li>
-            <li><i class="ion ion-md-time"></i><b>EXECUTION TIME:</b><br> ${metrics.optimized.execution_time} s</li>
+            <li><i class="ion ion-md-time"></i><b>EXECUTION TIME:</b><br> ${metrics.optimized.execution_time.toFixed(6)} s</li>
         `;
 
         // Update Results metrics with color-coded arrows
@@ -380,9 +312,127 @@ function updateMetrics(metrics) {
             <li><i class="ion ion-ios-flash"></i><b>ENERGY REDUCTION:</b><br> ${getResultHTML(energyReduction, 'kWh')}</li>
             <li><i class="ion ion-md-time"></i><b>TIME REDUCTION:</b><br> ${getResultHTML(timeReduction, 's')}</li>
         `;
+
+        // Update Complexity metrics
+        if (complexityBox) {
+            complexityBox.innerHTML = `
+                <li><i class="mdi mdi-timer"></i><b>TIME:</b> ${metrics.optimized.time_complexity}</li>
+                <li><i class="mdi mdi-exponent-box" style="color:#edbe25"></i><b>SPACE:</b> ${metrics.optimized.space_complexity}</li>
+                <li><i class="mdi mdi-matrix" style="color:#1A79E9"></i><b>CYCLOMATIC:</b> ${metrics.optimized.cyclomatic_complexity}</li>
+            `;
+        }
     }
 
     showMetricsToast();
+}
+
+function updateImpactSection(staticAnalysis) {
+    // Update the impact section with static analysis data
+    const co2Element = document.getElementById('impact-co2');
+    const energyElement = document.getElementById('impact-energy');
+    const treesElement = document.getElementById('impact-trees');
+    const ecoScoreElement = document.getElementById('impact-distance');
+    const energyEquivalentList = document.getElementById('energy-equivalent');
+    const carbonEquivalentList = document.getElementById('carbon-equivalent');
+
+    if (staticAnalysis && staticAnalysis.optimized) {
+        const analysis = staticAnalysis.optimized;
+        
+        // Update main metrics
+        if (co2Element) {
+            co2Element.textContent = `${(analysis.emissions_gco2 / 1000).toFixed(3)}kg`;
+        }
+        
+        if (energyElement) {
+            energyElement.textContent = `${analysis.estimated.energy_kwh.toFixed(6)}kWh`;
+        }
+        
+        if (treesElement) {
+            const trees = analysis.equivalents?.trees_offset || (analysis.emissions_gco2 / 22);
+            treesElement.textContent = trees.toFixed(2);
+        }
+        
+        if (ecoScoreElement) {
+            ecoScoreElement.textContent = `${analysis.eco_score.toFixed(1)}/100`;
+        }
+
+        // Update equivalents
+        if (energyEquivalentList) {
+            const energy = analysis.estimated.energy_kwh;
+            const lightBulbHours = (energy / 0.06).toFixed(1);
+            const smartphoneCharges = Math.round(energy * 1000 / 0.005); // Assuming 5Wh per charge
+            const laptopHours = (energy / 0.05).toFixed(1); // Assuming 50W laptop
+            
+            energyEquivalentList.innerHTML = `
+                <li>Powers a 60W light bulb for ${lightBulbHours} hours</li>
+                <li>Charges a smartphone ${smartphoneCharges} times</li>
+                <li>Runs a laptop for ${laptopHours} hours</li>
+            `;
+        }
+
+        if (carbonEquivalentList) {
+            const emissions = analysis.emissions_gco2;
+            const emails = Math.round(emissions / 4);
+            const trees = (emissions / 22).toFixed(2);
+            const impact = emissions < 10 ? 'Low' : emissions < 100 ? 'Moderate' : 'High';
+            
+            carbonEquivalentList.innerHTML = `
+                <li>Same as sending ${emails} emails</li>
+                <li>Equal to ${trees} trees absorbing CO₂ for a day</li>
+                <li>${impact} environmental impact</li>
+            `;
+        }
+    }
+}
+
+function updateSummarySections(staticAnalysis) {
+    // Update summary-left (Annual Impact)
+    const summaryLeft = document.getElementById('summary-left');
+    if (summaryLeft && staticAnalysis && staticAnalysis.optimized) {
+        const analysis = staticAnalysis.optimized;
+        const annualEmissions = analysis.annual_estimate?.gco2 || (analysis.emissions_gco2 * 1000);
+        const annualEnergy = analysis.annual_estimate?.kwh || (analysis.estimated.energy_kwh * 1000);
+        
+        summaryLeft.innerHTML = `
+            <h6> <i class="mdi mdi-calendar" style="color:#1A79E9"></i> Annual Impact</h6>
+            <div class="divider-light"></div>
+            <ul>
+                <li><b>Annual CO₂:</b> ${(annualEmissions / 1000).toFixed(3)} kg</li>
+                <li><b>Annual Energy:</b> ${annualEnergy.toFixed(6)} kWh</li>
+                <li><b>Eco Score:</b> ${analysis.eco_score.toFixed(1)}/100</li>
+                <li><b>Confidence:</b> ${(analysis.confidence * 100).toFixed(1)}%</li>
+            </ul>
+        `;
+    }
+
+    // Update summary-right (Optimization Suggestions)
+    const summaryRight = document.getElementById('summary-right');
+    if (summaryRight && staticAnalysis && staticAnalysis.optimized) {
+        const analysis = staticAnalysis.optimized;
+        const suggestions = analysis.suggestions || [];
+        const warnings = analysis.warnings || [];
+        
+        let suggestionsHTML = '';
+        if (suggestions.length > 0) {
+            suggestionsHTML = suggestions.map(suggestion => `<li>${suggestion}</li>`).join('');
+        } else {
+            suggestionsHTML = '<li>Code appears well-optimized</li>';
+        }
+
+        let warningsHTML = '';
+        if (warnings.length > 0) {
+            warningsHTML = warnings.map(warning => `<li style="color: #ff6b6b;">⚠️ ${warning}</li>`).join('');
+        }
+
+        summaryRight.innerHTML = `
+            <h6> <i class="mdi mdi-lightbulb-on" style="color:#edbe25;"></i> Optimization Suggestions</h6>
+            <div class="divider-light"></div>
+            <ul>
+                ${suggestionsHTML}
+                ${warningsHTML}
+            </ul>
+        `;
+    }
 }
 
 function showMetricsToast() {
@@ -659,13 +709,30 @@ function loadCSS(href) {
     const code = inputEditor.getValue();
     const btn  = document.getElementById('optimizeBtn');
   
+    // Get input parameters from the form
+    const inputSizeInput = document.getElementById('input-size');
+    const runsPerYearInput = document.getElementById('runs-per-year');
+    const keepCommentsCheckbox = document.getElementById('keep-comments');
+    const keepFstringsCheckbox = document.getElementById('keep-fstrings');
+    
+    const inputSizeN = inputSizeInput ? parseInt(inputSizeInput.value) || 1000000 : 1000000;
+    const runsPerYear = runsPerYearInput ? parseInt(runsPerYearInput.value) || 1000 : 1000;
+    const keepComments = keepCommentsCheckbox ? keepCommentsCheckbox.checked : true;
+    const keepFstrings = keepFstringsCheckbox ? keepFstringsCheckbox.checked : true;
+  
     btn.classList.add('optimizing');
   
     try {
       const res = await fetch('http://127.0.0.1:5000/optimize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code })
+        body: JSON.stringify({ 
+          code,
+          input_size_n: inputSizeN,
+          runs_per_year: runsPerYear,
+          keep_comments: keepComments,
+          keep_fstrings: keepFstrings
+        })
       });
       if (!res.ok) throw new Error(await res.text() || `HTTP ${res.status}`);
   
@@ -673,8 +740,17 @@ function loadCSS(href) {
       const optimized = data.optimized_code ?? data.code ?? '';
       outputEditor.setValue(optimized);
       outputEditor.scrollTo(0, 0);
+      
+      // Update changes and metrics if available
+      if (data.changes) updateChanges(data.changes);
+      if (data.metrics) updateMetrics(data.metrics);
+      if (data.static_analysis) {
+        updateImpactSection(data.static_analysis);
+        updateSummarySections(data.static_analysis);
+      }
     } catch (err) {
       console.error('Optimization failed:', err);
+      outputEditor.setValue(`Error: ${err.message}`);
     } finally {
       btn.classList.remove('optimizing'); // SVG + "Optimize" come back
     }

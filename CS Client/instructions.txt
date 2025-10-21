@@ -1,9 +1,0 @@
-This is the directory where you will work on building our UI for Optipy.
-
-This UI will send/receive Requests from our backend flask server.
-  - Make sure to handle all the necessary routes to receive all the information for the UI.
-
-As a recap, we will use React Vite for our Frontend.
-  - You may refer to the IT Client folder for any Inspiration on the UI.
-
-For any concerns, feel free to message our groupchat.

@@ -2,9 +2,11 @@ import ast
 from typing import Optional
 
 class EnergyEfficientReformatter(ast.NodeTransformer):
-    def __init__(self):
+    def __init__(self, keep_comments: bool = True, keep_fstrings: bool = True):
         self.changes_made = []
         self.comments_removed = []
+        self.keep_comments = keep_comments
+        self.keep_fstrings = keep_fstrings
         
     def visit_Module(self, node):
         """Track comments that will be removed during AST transformation"""
@@ -13,8 +15,11 @@ class EnergyEfficientReformatter(ast.NodeTransformer):
             for line in node.source_lines:
                 line = line.strip()
                 if line.startswith('#'):
-                    self.comments_removed.append(line)
-                    self.changes_made.append(f"Removed comment: {line}")
+                    if not self.keep_comments:
+                        self.comments_removed.append(line)
+                        self.changes_made.append(f"Removed comment: {line}")
+                    else:
+                        self.changes_made.append(f"Preserved comment: {line}")
         
         # Continue with normal visit
         self.generic_visit(node)
@@ -54,7 +59,11 @@ class EnergyEfficientReformatter(ast.NodeTransformer):
         return node
 
     def visit_JoinedStr(self, node):
-        """Convert f-strings to concatenation witzzh proper type conversion"""
+        """Convert f-strings to concatenation with proper type conversion"""
+        if self.keep_fstrings:
+            # Keep f-strings as they are
+            return node
+            
         parts = []
         for value in node.values:
             if isinstance(value, ast.Constant):
@@ -153,8 +162,14 @@ class EnergyEfficientReformatter(ast.NodeTransformer):
                 
         return node
 
-def refactor_code(code: str) -> tuple[Optional[str], list[str]]:
-    """Refactor code for better energy efficiency."""
+def refactor_code(code: str, keep_comments: bool = True, keep_fstrings: bool = True) -> tuple[Optional[str], list[str]]:
+    """Refactor code for better energy efficiency.
+    
+    Args:
+        code: The Python code to refactor
+        keep_comments: Whether to preserve comments in the output
+        keep_fstrings: Whether to preserve f-strings in the output
+    """
     try:
         # Parse the code into an AST
         tree = ast.parse(code)
@@ -163,12 +178,16 @@ def refactor_code(code: str) -> tuple[Optional[str], list[str]]:
         tree.source_lines = code.splitlines()
         
         # Apply our transformations
-        reformatter = EnergyEfficientReformatter()
+        reformatter = EnergyEfficientReformatter(keep_comments=keep_comments, keep_fstrings=keep_fstrings)
         modified_tree = reformatter.visit(tree)
         ast.fix_missing_locations(modified_tree)
         
         # Convert back to source code
         refactored = ast.unparse(modified_tree)
+        
+        # If we need to preserve comments, we need to merge them back
+        if keep_comments:
+            refactored = _merge_comments_back(code, refactored)
         
         # Validate the refactored code
         try:
@@ -184,3 +203,40 @@ def refactor_code(code: str) -> tuple[Optional[str], list[str]]:
         return None, [f"Invalid code structure: {str(e)}"]
     except Exception as e:
         return None, [f"Unexpected error during refactoring: {str(e)}"]
+
+
+def _merge_comments_back(original_code: str, refactored_code: str) -> str:
+    """Merge comments from original code back into refactored code."""
+    original_lines = original_code.splitlines()
+    refactored_lines = refactored_code.splitlines()
+    
+    # Find comment lines in original code
+    comment_lines = []
+    for i, line in enumerate(original_lines):
+        stripped = line.strip()
+        if stripped.startswith('#'):
+            comment_lines.append((i, line))
+    
+    # If no comments, return refactored code as-is
+    if not comment_lines:
+        return refactored_code
+    
+    # Insert comments back into refactored code at appropriate positions
+    result_lines = refactored_lines.copy()
+    
+    # For each comment, try to find the best place to insert it
+    for line_num, comment_line in comment_lines:
+        # Find the closest non-empty line in refactored code
+        best_insert_pos = _find_best_insert_position(line_num, result_lines)
+        result_lines.insert(best_insert_pos, comment_line)
+    
+    return '\n'.join(result_lines)
+
+
+def _find_best_insert_position(original_line_num: int, refactored_lines: list) -> int:
+    """Find the best position to insert a comment in the refactored code."""
+    # Simple heuristic: try to maintain relative position
+    if original_line_num < len(refactored_lines):
+        return original_line_num
+    else:
+        return len(refactored_lines)

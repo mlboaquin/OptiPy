@@ -5,8 +5,7 @@ import os
 from flask_cors import CORS
 import pytesseract
 
-
-from codecarbon import EmissionsTracker
+from static_analyzer import StaticCodeAnalyzer
 from code_reformatter import refactor_code
 import ast
 import time
@@ -23,6 +22,7 @@ import base64
 app = Flask(__name__)
 CORS(app) 
 extractor = CodeExtractor()
+analyzer = StaticCodeAnalyzer()
 
 print("CONNECT.PY IS RUNNING")
 
@@ -55,66 +55,9 @@ def image_to_code():
 
 print("CONNECT.PY IS RUNNING")
 
-class EmissionsRunner(multiprocessing.Process):
-    """Class to run code and track emissions in a separate process."""
-    def __init__(self, code_str):
-        super().__init__()
-        self.code_str = code_str
-        self.result = multiprocessing.Manager().dict()
-
-    def run(self):
-        try:
-            # Create and execute function
-            namespace = {}
-            exec(self.code_str, globals(), namespace)
-            func = namespace['process_data']  # The function must be named process_data
-
-            # Track emissions
-            tracker = EmissionsTracker(log_level="error", save_to_file=False)
-            tracker.start()
-            start_time = time.time()
-            
-            # Capture output and run function
-            with redirect_stdout(io.StringIO()):
-                func()
-                
-            end_time = time.time()
-            emissions = tracker.stop()
-            energy = tracker.final_emissions_data.energy_consumed
-            execution_time = end_time - start_time
-            
-            self.result.update({
-                'emissions': emissions,
-                'energy': energy,
-                'execution_time': execution_time
-            })
-        except Exception as e:
-            self.result.update({'error': str(e)})
-
-def run_with_emissions_tracking(code_str: str) -> dict:
-    """Run code in a separate process and track emissions."""
-    runner = EmissionsRunner(code_str)
-    runner.start()
-    runner.join()
-    
-    if 'error' in runner.result:
-        return {'error': runner.result['error']}
-    return dict(runner.result)
-
-def create_wrapped_code(code_str: str) -> str:
-    """Wrap code in a function named process_data."""
-    # Remove any existing process_data function definition
-    lines = code_str.split('\n')
-    filtered_lines = [line for line in lines if not line.strip().startswith('def process_data')]
-    
-    # Create the wrapped code
-    wrapped_code = "def process_data():\n"
-    wrapped_code += "\n".join(f"    {line}" for line in filtered_lines if line.strip())
-    return wrapped_code
-
 @app.route('/optimize', methods=['POST'])
 def optimize_code():
-    """Endpoint to receive code and return optimized version with emissions comparison."""
+    """Endpoint to receive code and return optimized version with static analysis comparison."""
     print("OPTIMIZE ENDPOINT CALLED")
     try:
         data = request.get_json()
@@ -123,9 +66,15 @@ def optimize_code():
             return jsonify({'error': 'No code provided'}), 400
 
         original_code = data['code']
+        input_size_n = data.get('input_size_n', 1000000)
+        runs_per_year = data.get('runs_per_year', 1000)
+        lat = data.get('lat')
+        lon = data.get('lon')
+        keep_comments = data.get('keep_comments', True)
+        keep_fstrings = data.get('keep_fstrings', True)
 
         # First, try to refactor the code
-        refactored_code, changes = refactor_code(original_code)
+        refactored_code, changes = refactor_code(original_code, keep_comments=keep_comments, keep_fstrings=keep_fstrings)
         print("Refactored code:", refactored_code)
         print("Changes:", changes)
         
@@ -135,39 +84,68 @@ def optimize_code():
                 'details': changes
             }), 400
 
-        # Wrap both versions in process_data function
-        wrapped_original = create_wrapped_code(original_code)
-        wrapped_optimized = create_wrapped_code(refactored_code)
+        # Analyze both versions using static analysis
+        original_analysis = analyzer.analyze_code(
+            code=original_code,
+            input_size_n=input_size_n,
+            runs_per_year=runs_per_year,
+            lat=lat,
+            lon=lon
+        )
+        
+        optimized_analysis = analyzer.analyze_code(
+            code=refactored_code,
+            input_size_n=input_size_n,
+            runs_per_year=runs_per_year,
+            lat=lat,
+            lon=lon
+        )
 
-        # Measure emissions for both versions using multiprocessing
-        original_metrics = run_with_emissions_tracking(wrapped_original)
-        optimized_metrics = run_with_emissions_tracking(wrapped_optimized)
-
-        # Check for errors in measurements
-        if 'error' in original_metrics or 'error' in optimized_metrics:
+        # Check for errors in analysis
+        if 'error' in original_analysis or 'error' in optimized_analysis:
             return jsonify({
-                'error': 'Error measuring emissions',
-                'original_error': original_metrics.get('error'),
-                'optimized_error': optimized_metrics.get('error')
+                'error': 'Error in static analysis',
+                'original_error': original_analysis.get('error'),
+                'optimized_error': optimized_analysis.get('error')
             }), 500
 
         # Calculate improvements
-        emissions_reduction = original_metrics['emissions'] - optimized_metrics['emissions']
-        energy_reduction = original_metrics['energy'] - optimized_metrics['energy']
-        time_reduction = original_metrics['execution_time'] - optimized_metrics['execution_time']
+        emissions_reduction = original_analysis['emissions_gco2'] - optimized_analysis['emissions_gco2']
+        energy_reduction = original_analysis['estimated']['energy_kwh'] - optimized_analysis['estimated']['energy_kwh']
+        time_reduction = original_analysis['estimated']['runtime_s'] - optimized_analysis['estimated']['runtime_s']
 
         return jsonify({
             'original_code': original_code,
             'optimized_code': refactored_code,
             'changes': changes,
             'metrics': {
-                'original': original_metrics,
-                'optimized': optimized_metrics,
+                'original': {
+                    'emissions': original_analysis['emissions_gco2'] / 1000,  # Convert to kg CO2
+                    'energy': original_analysis['estimated']['energy_kwh'],
+                    'execution_time': original_analysis['estimated']['runtime_s'],
+                    'time_complexity': original_analysis['metrics']['time_complexity'],
+                    'space_complexity': original_analysis['metrics']['space_complexity'],
+                    'cyclomatic_complexity': original_analysis['metrics']['cyclomatic_complexity'],
+                    'eco_score': original_analysis['eco_score']
+                },
+                'optimized': {
+                    'emissions': optimized_analysis['emissions_gco2'] / 1000,  # Convert to kg CO2
+                    'energy': optimized_analysis['estimated']['energy_kwh'],
+                    'execution_time': optimized_analysis['estimated']['runtime_s'],
+                    'time_complexity': optimized_analysis['metrics']['time_complexity'],
+                    'space_complexity': optimized_analysis['metrics']['space_complexity'],
+                    'cyclomatic_complexity': optimized_analysis['metrics']['cyclomatic_complexity'],
+                    'eco_score': optimized_analysis['eco_score']
+                },
                 'improvements': {
-                    'emissions_reduction': emissions_reduction,
+                    'emissions_reduction': emissions_reduction / 1000,  # Convert to kg CO2
                     'energy_reduction': energy_reduction,
                     'time_reduction': time_reduction
                 }
+            },
+            'static_analysis': {
+                'original': original_analysis,
+                'optimized': optimized_analysis
             }
         })
 

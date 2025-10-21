@@ -150,23 +150,23 @@
       
       <div class="input-box">
       <div class="inputGroup">
-        <input type="text" required="" autocomplete="off">
-        <label for="name">No. of Inputs</label>
+        <input type="text" id="input-size" required="" autocomplete="off" value="1000000">
+        <label for="input-size">No. of Inputs</label>
       </div>
       <div class="inputGroup" id="runsPY">
-        <input type="text" required="" autocomplete="off">
-        <label for="name">No. of Approx runs/yr</label>
+        <input type="text" id="runs-per-year" required="" autocomplete="off" value="1000">
+        <label for="runs-per-year">No. of Approx runs/yr</label>
       </div>
     </div>
 
       <div class="toggle">
       <label class="switch">
-        <input type="checkbox">
+        <input type="checkbox" id="keep-comments" checked>
         <span class="slider"></span>
       </label> <span class="switch-text">Keep Comments</span>
 
       <label class="switch">
-        <input type="checkbox">
+        <input type="checkbox" id="keep-fstrings" checked>
         <span class="slider"></span>
       </label> <span class="switch-text">Keep F-strings</span>
       
@@ -239,7 +239,7 @@
                   <path d="M14.2647 15.9377L12.5473 14.2346C11.758 13.4519 11.3633 13.0605 10.9089 12.9137C10.5092 12.7845 10.079 12.7845 9.67922 12.9137C9.22485 13.0605 8.83017 13.4519 8.04082 14.2346L4.04193 18.2622M14.2647 15.9377L14.606 15.5991C15.412 14.7999 15.8149 14.4003 16.2773 14.2545C16.6839 14.1262 17.1208 14.1312 17.5244 14.2688C17.9832 14.4253 18.3769 14.834 19.1642 15.6515L20 16.5001M14.2647 15.9377L18.22 19.9628M18.22 19.9628C17.8703 20 17.4213 20 16.8 20H7.2C6.07989 20 5.51984 20 5.09202 19.782C4.7157 19.5903 4.40973 19.2843 4.21799 18.908C4.12583 18.7271 4.07264 18.5226 4.04193 18.2622M18.22 19.9628C18.5007 19.9329 18.7175 19.8791 18.908 19.782C19.2843 19.5903 19.5903 19.2843 19.782 18.908C20 18.4802 20 17.9201 20 16.8V13M11 4H7.2C6.07989 4 5.51984 4 5.09202 4.21799C4.7157 4.40973 4.40973 4.71569 4.21799 5.09202C4 5.51984 4 6.0799 4 7.2V16.8C4 17.4466 4 17.9066 4.04193 18.2622M18 9V6M18 6V3M18 6H21M18 6H15" stroke="#4b4b4bc9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </div>
-              <button class="btn btn2" id="optimizeBtn" onclick="optimize()">
+              <button class="btn btn2" id="optimizeBtn">
                 <svg height="24" width="24" fill="#FFFFFF" viewBox="0 0 24 24" data-name="Layer 1" class="sparkle icon-opt">
                   <path d="M10,21.236,6.755,14.745.264,11.5,6.755,8.255,10,1.764l3.245,6.491L19.736,11.5l-6.491,3.245ZM18,21l1.5,3L21,21l3-1.5L21,18l-1.5-3L18,18l-3,1.5ZM19.333,4.667,20.5,7l1.167-2.333L24,3.5,21.667,2.333,20.5,0,19.333,2.333,17,3.5Z"></path>
                 </svg>
@@ -287,7 +287,7 @@
   <div class="container">
     <div class="impact-header">
       <h2>Environmental Impact</h2>
-      <p>This shows the real-life impact of your code.</p>
+      <p>This shows the real-life impact of your pasted or written code.</p>
     </div>
 
 
@@ -295,13 +295,13 @@
       <div class="impact-card">
         <div class="icon-badge badge-green"><i class="ion ion-ios-leaf"></i></div>
         <div class="metric-value" id="impact-co2">0.00kg</div>
-        <div class="metric-label">CO₂ Emissions Reduced</div>
+        <div class="metric-label">CO₂ Emissions</div>
       </div>
 
       <div class="impact-card">
         <div class="icon-badge badge-yellow"><i class="ion ion-ios-flash"></i></div>
         <div class="metric-value" id="impact-energy">0.00kWh</div>
-        <div class="metric-label">Energy Saved</div>
+        <div class="metric-label">Energy Consumption</div>
       </div>
 
       <div class="impact-card">
@@ -321,9 +321,9 @@
           <i class="ion ion-ios-flash" style="color:#edbe25";></i> Energy Usage Equivalent
         </div>
         <ul class="bullet-list" id="energy-equivalent">
-          <li>Powers a 60W light bulb for 0.7 hours</li>
-          <li>Charges a smartphone 4,385 times</li>
-          <li>Runs a laptop for 0.9 hours</li>
+          <li>Powers a 60W light bulb for N hours</li>
+          <li>Charges a smartphone N times</li>
+          <li>Runs a laptop for N hours</li>
         </ul>
       </div>
 
@@ -332,10 +332,36 @@
           <i class="ion ion-ios-leaf" style="color:#00a308";></i> Carbon Footprint Equivalent
         </div>
         <ul class="bullet-list" id="carbon-equivalent">
-          <li>Same as sending 5 emails</li>
-          <li>Equal to 0.95 trees absorbing CO₂ for a day</li>
+          <li>Same as sending N emails</li>
+          <li>Equal to N trees absorbing CO₂ for a day</li>
           <li>Moderate environmental impact</li>
         </ul>
+      </div>
+    </div>
+
+    <!-- Summary cards moved from features section -->
+    <div class="row">
+      <div class="col-md-6">
+        <div class="features-box" id="summary-left">
+          <h6> <i class="mdi mdi-calendar" style="color:#1A79E9"></i> Annual Impact</h6>
+          <div class="divider-light"></div>
+          <ul>
+            <li>Annual CO₂: N kg</li>
+            <li>Annual Energy: N kWh</li>
+            <li>Eco Score: N/100</li>
+            <li>Confidence: N%</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="features-box" id="summary-right">
+          <h6> <i class="mdi mdi-lightbulb-on" style="color:#edbe25;"></i> Optimization Suggestions</h6>
+          <div class="divider-light"></div>
+          <ul>
+            <li>Suggestions: will be shown here</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -413,31 +439,6 @@
           </div>
         </div>
 
-        <!-- Bottom section: 2 wide summary cards -->
-        <div class="col-md-6">
-          <div class="features-box" id="summary-left">
-            <h6> <i class="mdi mdi-calendar" style="color:#1A79E9"></i> Annual Impact</h6>
-            <div class="divider-light"></div>
-            <ul>
-              <li>Comparison Visualization</li>
-              <li>Graph or Metrics Trend</li>
-              <li>Interpretation of Change</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <div class="features-box" id="summary-right">
-            <h6> <i class="mdi mdi-lightbulb-on" style="color:#edbe25;"></i> Optimization Suggestions</h6>
-            <div class="divider-light"></div>
-            <ul>
-              <li>Carbon Footprint Equivalent</li>
-              <li>Energy Usage Equivalent</li>
-              <li>Real-world Analysis</li>
-            </ul>
-          </div>
-
-        
       </div>
     </div>
   </section>
@@ -490,7 +491,6 @@
           <div class="col-md-4 col-xs-12">
             <small><b>IMPORTANT LINKS</b><br>
               <a href="https://github.com/mlboaquin/OptiPy">OptiPy Github</a> <br>
-              <a href="https://codecarbon.io/">CodeCarbon</a> <br>
               <br><br><br>2025 &copy; All rights reserved. </small>
           </div>
       </div>
@@ -506,14 +506,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
   
     <script src="script.js"></script>
-    <script>
-      function handleKeyDown(event) {
-        if (event.key === 'Enter') {
-          event.preventDefault(); // Prevents the default action of the Enter key
-          checkGrammar(); // Calls the checkGrammar function
-        }
-      }
-    </script>
 
     <div id="metrics-toast" style="display:none; position:fixed; left:50%; bottom:30px; transform:translateX(-50%); padding: 10px; background:#222; color:#fff; padding:8px 18px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.2); font-size:14px; cursor:pointer; z-index:9999;">
         Code optimized! <u>Click here to see metrics</u>
